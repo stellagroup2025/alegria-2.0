@@ -7,3 +7,4 @@ __pycache__/
 *.pyc
 # copia de la web de referencia (yaas-energy.com): es de otra empresa, no se publica
 referencia-yaas/
+.claves-personal.txt

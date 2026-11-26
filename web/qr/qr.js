@@ -1,5 +1,5 @@
-// Página QR de mesa (maqueta de Qronnect). Solo front: la carta sale de carta.json (mismo sitio) y la
-// tarjeta de sellos se guarda en el localStorage de este móvil. No hay ninguna petición a servidores.
+// Página QR de mesa. La tarjeta de sellos es real: alta, sellos y premios van a la base de datos común de
+// clientes (Supabase) a través de sus funciones RPC. Este móvil solo guarda su código y su token.
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const view = document.body.dataset.qr;
@@ -29,10 +29,56 @@ function toast(title, text = "", ms = 3200) {
   toastTimer = setTimeout(() => t.classList.remove("is-on"), ms);
 }
 
-// ============ 1 · los tres botones ============
+// ============ base de datos (Supabase, solo funciones RPC) ============
+const SB = JSON.parse($("#supabase")?.textContent || "{}");
+async function rpc(fn, args) {
+  let r;
+  try {
+    r = await fetch(`${SB.url}/rest/v1/rpc/${fn}`, {
+      method: "POST",
+      headers: { apikey: SB.key, "Content-Type": "application/json" },
+      body: JSON.stringify(args),
+    });
+  } catch { return { error: "red" }; }
+  if (!r.ok) return { error: "servidor" };
+  return (await r.json()) ?? { error: "servidor" };
+}
+const ERRORES = {
+  red: "Sin conexión. Comprueba los datos o el wifi y vuelve a probar.",
+  servidor: "Algo ha fallado. Vuelve a probar en un momento.",
+  ya_registrado: "Este teléfono ya tiene tarjeta. Pide en la barra que te la recuperen en este móvil.",
+  telefono: "Revisa el teléfono: tiene que tener al menos 9 cifras.",
+  nombre: "Tu nombre debe tener al menos 2 letras.",
+  email: "Revisa el email.",
+  fecha: "Revisa la fecha de nacimiento.",
+  privacidad: "Necesitamos que aceptes la política de privacidad.",
+  limite: "Ahora mismo hay muchas altas. Vuelve a probar en unos minutos.",
+  no_encontrado: "No encontramos esa tarjeta.",
+  clave: "Clave incorrecta.",
+  bloqueado: "Demasiados intentos fallidos. Espera 15 minutos.",
+  negocio: "Este local no está configurado.",
+  solo_admin: "Solo con la clave del dueño.",
+};
+const msg = (e) => ERRORES[e] || ERRORES.servidor;
+const QR_BASE = new URL(".", location.href).href; // …/qr/
+function qrSvg(texto, label) {
+  if (!window.qrcode) return `<p class="qr-muted">${esc(texto)}</p>`;
+  const q = window.qrcode(0, "M");
+  q.addData(texto); q.make();
+  return q.createSvgTag({ cellSize: 1, margin: 2, scalable: true }).replace("<svg ", `<svg role="img" aria-label="${esc(label)}" shape-rendering="crispEdges" `);
+}
+const fecha = (iso) => new Date(iso).toLocaleDateString("es-ES", { day: "numeric", month: "short" });
+const hace = (iso) => {
+  const h = (Date.now() - new Date(iso)) / 36e5;
+  return h < 1 ? "hace un rato" : h < 24 ? `hace ${Math.floor(h)} h` : `el ${fecha(iso)}`;
+};
+
+// ============ 1 · los botones ============
 if (view === "inicio") {
-  // con el alta hecha en este móvil va directo a su tarjeta; si no, a apuntarse
-  $('[data-via="sellos"]').href = getState()?.cliente ? "sellos.html#tarjeta" : "sellos.html#alta";
+  // con la tarjeta ya hecha en este móvil va directo a ella; si no, a apuntarse
+  const yo = store.get("cliente");
+  const a = $('[data-via="sellos"]');
+  if (a) a.href = yo?.codigo ? "sellos.html#tarjeta" : "sellos.html#alta";
 }
 
 // ============ 2 · la carta ============
@@ -167,34 +213,44 @@ if (view === "carta") {
 if (view === "sellos") {
   const P = JSON.parse($("#programa").textContent);
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const alta = $('[data-view="alta"]'), tarjeta = $('[data-view="tarjeta"]');
+  const vistas = $$("[data-view]");
+  const CLI = "cliente";
+  let yo = store.get(CLI), tarjeta = null, anterior = null;
+
+  // enlace de recuperación que genera la barra: sellos.html#c=CODIGO&t=TOKEN
+  const h = new URLSearchParams(location.hash.slice(1));
+  if (h.get("c") && h.get("t")) { yo = { codigo: h.get("c").toUpperCase(), token: h.get("t") }; store.set(yo, CLI); }
 
   function mostrar(cual) {
-    alta.hidden = cual !== "alta";
-    tarjeta.hidden = cual !== "tarjeta";
-    history.replaceState(null, "", `#${cual}`);
-    scrollTo(0, 0);
-    if (cual === "tarjeta") pintar();
+    vistas.forEach((v) => (v.hidden = v.dataset.view !== cual));
+    if (cual !== "cargando") history.replaceState(null, "", `#${cual}`);
+    if (cual !== "cargando") scrollTo(0, 0);
   }
 
-  // ----- alta: los pasos y validaciones de registro-form-v2 -----
-  const form = $(".qr-form"), DRAFT = "registro_form_draft";
-  const EJEMPLO = { nombre: "Laura Gómez", email: "laura@ejemplo.com", telefono: "612345678", fecha_nacimiento: "1995-06-14", codigo_postal: "28053" };
+  // ----- alta -----
+  const form = $(".qr-form"), DRAFT = "alta_borrador";
+  const CAMPOS = ["nombre", "telefono", "email", "fecha_nacimiento"];
   let paso = 1;
   const campo = (n) => form.elements[n];
   const REGLAS = {
-    nombre: (v) => (v.trim().length >= 2 ? "" : "Tu nombre debe tener al menos 2 caracteres"),
-    email: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? "" : "Por favor, revisa que tu email sea correcto"),
-    telefono: (v) => (v.replace(/\D/g, "").length >= 9 ? "" : "El teléfono debe tener al menos 9 dígitos"),
-    codigo_postal: (v) => (!v || /^\d{5}$/.test(v) ? "" : "El código postal debe tener 5 dígitos"),
+    nombre: (v) => (v.trim().length >= 2 ? "" : "Tu nombre debe tener al menos 2 letras"),
+    telefono: (v) => (v.replace(/\D/g, "").length >= 9 ? "" : "El teléfono debe tener al menos 9 cifras"),
+    email: (v) => (!v.trim() || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? "" : "Revisa que tu email sea correcto"),
+    fecha_nacimiento: (v) => {
+      if (!v) return "";
+      const d = new Date(v), edad = (Date.now() - d) / (365.25 * 864e5);
+      return edad >= 16 && d.getFullYear() >= 1920 ? "" : "Revisa la fecha";
+    },
   };
-  const OK = { nombre: "¡Perfecto!", email: "¡Genial!" };
+  const OK = { nombre: "¡Perfecto!", telefono: "¡Genial!" };
   function validar(n, mostrarError = true) {
     const el = campo(n), hint = $(`.qr-hint[data-for="${n}"]`), err = REGLAS[n](el.value);
     el.classList.toggle("is-bad", !!err && mostrarError);
-    el.classList.toggle("is-good", !err && !!el.value && n !== "codigo_postal");
-    hint.className = "qr-hint" + (err && mostrarError ? " is-bad" : !err && OK[n] && el.value ? " is-good" : "");
-    hint.innerHTML = err && mostrarError ? esc(err) : !err && OK[n] && el.value ? `${ico(CHECK)} ${OK[n]}` : "";
+    el.classList.toggle("is-good", !err && !!el.value && !!OK[n]);
+    if (hint) {
+      hint.className = "qr-hint" + (err && mostrarError ? " is-bad" : !err && OK[n] && el.value ? " is-good" : "");
+      hint.innerHTML = err && mostrarError ? esc(err) : !err && OK[n] && el.value ? `${ico(CHECK)} ${OK[n]}` : "";
+    }
     if (el.value || err) el.setAttribute("aria-invalid", String(!!err && mostrarError));
     return !err;
   }
@@ -207,112 +263,350 @@ if (view === "sellos") {
     $(".qr-progress").setAttribute("aria-valuenow", pct);
     guardarBorrador();
   }
-  function botonPaso1() {
-    $('[data-step="1"] [data-next]').disabled = !["nombre", "email", "telefono"].every((n) => campo(n).value);
-  }
+  const botonPaso1 = () => ($('[data-step="1"] [data-next]').disabled = !["nombre", "telefono"].every((n) => campo(n).value));
   function guardarBorrador() {
-    const data = Object.fromEntries(Object.keys(EJEMPLO).map((n) => [n, campo(n).value]));
+    const data = Object.fromEntries(CAMPOS.map((n) => [n, campo(n).value]));
     if (Object.values(data).some(Boolean)) store.set({ data, step: paso, timestamp: Date.now() }, DRAFT);
   }
-  // demo: datos de ejemplo ya puestos (o el borrador de menos de 1 hora, como Qronnect)
   const borrador = store.get(DRAFT);
-  const datos = borrador && Date.now() - borrador.timestamp < 3600e3 ? borrador.data : EJEMPLO;
-  Object.entries(datos).forEach(([n, v]) => { if (campo(n)) campo(n).value = v ?? ""; });
-  if (borrador && Date.now() - borrador.timestamp >= 3600e3) store.del(DRAFT);
+  const vivo = borrador && Date.now() - borrador.timestamp < 3600e3;
+  if (vivo) Object.entries(borrador.data).forEach(([n, v]) => { if (campo(n)) campo(n).value = v ?? ""; });
+  else store.del(DRAFT);
 
-  ["nombre", "email", "telefono", "codigo_postal"].forEach((n) => campo(n).addEventListener("input", () => { validar(n); botonPaso1(); guardarBorrador(); }));
-  campo("fecha_nacimiento").addEventListener("input", guardarBorrador);
-  ["nombre", "email"].forEach((n) => validar(n, false));
+  CAMPOS.forEach((n) => campo(n).addEventListener("input", () => { validar(n); botonPaso1(); guardarBorrador(); }));
   botonPaso1();
 
   $$("[data-next]", form).forEach((b) => b.addEventListener("click", () => {
-    if (paso === 1 && !["nombre", "email", "telefono"].map((n) => validar(n)).every(Boolean)) { form.querySelector(".is-bad")?.focus(); return; }
-    if (paso === 2 && b.classList.contains("btn") && !validar("codigo_postal")) return;
+    if (paso === 1 && !["nombre", "telefono", "email"].map((n) => validar(n)).every(Boolean)) { form.querySelector(".is-bad")?.focus(); return; }
+    if (paso === 2 && b.dataset.skip !== undefined) campo("fecha_nacimiento").value = "";
+    if (paso === 2 && !validar("fecha_nacimiento")) return;
+    if (paso === 2) campo("aceptarCumple").closest(".qr-check").hidden = !campo("fecha_nacimiento").value;
     irA(paso + 1);
-    toast("✨ ¡Perfecto!", "Un paso más para disfrutar de las ventajas exclusivas");
   }));
   $$("[data-prev]", form).forEach((b) => b.addEventListener("click", () => irA(paso - 1)));
-  const terminos = campo("aceptarTerminos"), enviar = $('[type="submit"]', form);
-  terminos.addEventListener("change", () => {
-    enviar.disabled = !terminos.checked;
-    $('.qr-hint[data-for="aceptarTerminos"]').textContent = "";
+  const privacidad = campo("aceptarPrivacidad"), enviar = $('[type="submit"]', form), errForm = $(".qr-form-error");
+  privacidad.addEventListener("change", () => {
+    enviar.disabled = !privacidad.checked;
+    $('.qr-hint[data-for="aceptarPrivacidad"]').textContent = "";
   });
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    if (!terminos.checked) { $('.qr-hint[data-for="aceptarTerminos"]').textContent = "Necesitamos que aceptes los términos para continuar"; return; }
-    // demo: en Qronnect aquí va el POST de alta y la validación del email. Aquí solo se guarda en el móvil.
-    const cliente = Object.fromEntries(Object.keys(EJEMPLO).map((n) => [n, campo(n).value.trim()]));
-    cliente.marketing = campo("aceptarMarketing").checked;
-    setState({ cliente, sellos: 0, completada: null });
-    store.del(DRAFT);
-    mostrar("tarjeta");
+    if (!privacidad.checked) { $('.qr-hint[data-for="aceptarPrivacidad"]').textContent = msg("privacidad"); return; }
+    enviar.disabled = true; enviar.textContent = "Creando tu tarjeta…"; errForm.textContent = "";
+    const r = await rpc("alta_cliente", {
+      p_negocio: SB.negocio,
+      p_nombre: campo("nombre").value.trim(),
+      p_telefono: campo("telefono").value,
+      p_email: campo("email").value.trim() || null,
+      p_fecha_nacimiento: campo("fecha_nacimiento").value || null,
+      p_acepta_privacidad: true,
+      p_acepta_promos: campo("aceptarPromos").checked,
+      p_acepta_cumple: campo("aceptarCumple").checked && !!campo("fecha_nacimiento").value,
+    });
+    enviar.disabled = false; enviar.textContent = "🎉 Crear mi tarjeta";
+    if (r.error) { errForm.textContent = msg(r.error); return; }
+    // las elecciones del alta se recuerdan en este móvil para el panel «Mis datos»
+    yo = { codigo: r.codigo, token: r.token, promos: campo("aceptarPromos").checked, cumple: campo("aceptarCumple").checked && !!campo("fecha_nacimiento").value };
+    store.set(yo, CLI); store.del(DRAFT);
+    pintar(r); mostrar("tarjeta");
+    toast("✨ ¡Ya tienes tu tarjeta!", "Enseña tu QR en la barra en cada visita");
   });
 
-  // ----- tarjeta: TarjetaSelloCard -----
-  const slotsEl = $(".qr-slots"), slots = $$(".qr-slot", slotsEl);
-  function pintar(nuevo = -1) {
-    const s = getState();
-    if (!s?.cliente) return mostrar("alta");
-    const n = Math.min(s.sellos, P.objetivo), completa = n >= P.objetivo, faltan = Math.max(0, P.objetivo - n);
+  // ----- tarjeta -----
+  const slotsEl = $(".qr-slots");
+  function rehacerCasillas(n) {
+    if ($$(".qr-slot", slotsEl).length === n) return;
+    slotsEl.innerHTML = Array.from({ length: n }, (_, i) => (i === n - 1 ? P.slot.ultima : P.slot.normal)
+      .replace(/data-i="\d+"/, `data-i="${i}"`).replace(/<span class="qr-slot-num">\d+<\/span>/, `<span class="qr-slot-num">${i + 1}</span>`)).join("");
+    slotsEl.style.setProperty("--cols", n > 10 ? 6 : 5);
+  }
+  function pintar(t) {
+    const antes = tarjeta?.sellos;
+    tarjeta = t;
+    rehacerCasillas(t.objetivo);
+    const n = Math.min(t.sellos, t.objetivo), faltan = Math.max(0, t.objetivo - n), cupon = t.cupon;
+    $(".qr-hola").textContent = t.nombre.split(" ")[0];
     $(".qr-counter b").textContent = n;
-    slotsEl.setAttribute("aria-label", `${n} de ${P.objetivo} sellos`);
-    slots.forEach((li, i) => { li.classList.toggle("is-full", i < n); li.classList.toggle("is-new", i === nuevo); });
-    $(".qr-left").hidden = completa;
-    $(".qr-left").textContent = `${faltan === 1 ? "¡Solo te falta 1 sello!" : `Te faltan ${faltan} sellos.`} Te lo ponen en caja al escanear tu QR.`;
-    $(".qr-coupon").hidden = !completa;
-    if (completa && s.completada) {
-      const dias = Math.max(0, Math.ceil((s.completada + 30 * 864e5 - Date.now()) / 864e5));
+    $(".qr-counter span").textContent = `/${t.objetivo}`;
+    $(".qr-premio").textContent = t.premio;
+    slotsEl.setAttribute("aria-label", `${n} de ${t.objetivo} sellos`);
+    $$(".qr-slot", slotsEl).forEach((li, i) => { li.classList.toggle("is-full", i < n); li.classList.toggle("is-new", antes !== undefined && i >= antes && i < n); });
+    $(".qr-left").hidden = !!cupon;
+    $(".qr-left").textContent = n === 0 ? "Enseña tu QR en la barra y te ponemos el primer sello."
+      : `${faltan === 1 ? "¡Solo te falta 1 sello!" : `Te faltan ${faltan} sellos.`} Último sello: ${hace(t.ultimo_sello_at)}.`;
+    $(".qr-coupon").hidden = !cupon;
+    if (cupon) {
+      $(".qr-coupon-qr").innerHTML = qrSvg(`${QR_BASE}barra.html#u=${cupon.codigo}`, "QR del premio");
+      $(".qr-code").textContent = cupon.codigo;
+      const dias = Math.max(0, Math.ceil((new Date(cupon.caduca_at) - Date.now()) / 864e5));
       const exp = $(".qr-expire");
       exp.textContent = dias === 0 ? "Caduca hoy" : `Caduca en ${dias} día${dias !== 1 ? "s" : ""}`;
       exp.style.color = dias < 7 ? "#ff9aac" : "";
     }
-    $("[data-stamp]").disabled = completa;
-    $(".qr-pass-client").textContent = s.cliente.nombre;
+    $(".qr-pass-client").textContent = t.nombre;
+    $(".qr-mi-codigo").textContent = t.codigo;
+    if (!$(".qr-pass-code svg")) $(".qr-pass-code").innerHTML = qrSvg(`${QR_BASE}barra.html#c=${t.codigo}`, "Tu código QR de cliente");
+    if (antes !== undefined && t.sellos > antes) {
+      const c = $(".qr-counter");
+      c.classList.remove("is-bump"); void c.offsetWidth; c.classList.add("is-bump");
+      toast(cupon ? "🎉 ¡Tarjeta completa!" : "Sello añadido", cupon ? "Tu premio te espera" : `${n} de ${t.objetivo}`);
+      if (cupon) setTimeout(() => $(".qr-coupon").scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" }), 500);
+    }
+    if (antes !== undefined && anterior?.cupon && !cupon) toast("🍹 ¡Premio entregado!", "Tarjeta nueva: a por la siguiente");
+    anterior = t;
   }
-  $("[data-stamp]").addEventListener("click", () => {
-    const s = getState();
-    if (!s || s.sellos >= P.objetivo) return;
-    s.sellos += 1;
-    if (s.sellos >= P.objetivo) s.completada = Date.now();
-    setState(s);
-    slots.forEach((li) => li.classList.remove("is-new"));
-    void slotsEl.offsetWidth; // reinicia la animación
-    pintar(s.sellos - 1);
-    const c = $(".qr-counter");
-    c.classList.remove("is-bump"); void c.offsetWidth; c.classList.add("is-bump");
-    toast(s.sellos >= P.objetivo ? "🎉 ¡Tarjeta completa!" : "Sello añadido", s.sellos >= P.objetivo ? "Tu premio te espera" : `${s.sellos} de ${P.objetivo}`);
-    if (s.sellos >= P.objetivo) setTimeout(() => $(".qr-coupon").scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" }), 500);
+  async function cargar() {
+    if (!yo?.codigo) return false;
+    const t = await rpc("mi_tarjeta", { p_codigo: yo.codigo, p_token: yo.token });
+    if (t.error === "no_encontrado") { store.del(CLI); yo = null; return false; }
+    if (t.error) { if (!tarjeta) toast("Sin conexión", msg(t.error)); return !!tarjeta; }
+    pintar(t);
+    return true;
+  }
+  // mientras la tarjeta está a la vista se actualiza sola (el sello lo pone la barra desde otro móvil)
+  setInterval(() => { if (!document.hidden && !$('[data-view="tarjeta"]').hidden) cargar(); }, 8000);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden && yo) cargar(); });
+
+  // ----- mis datos -----
+  $(".qr-prefs").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const r = await rpc("mis_preferencias", { p_codigo: yo.codigo, p_token: yo.token,
+      p_acepta_promos: $("#prefPromos").checked, p_acepta_cumple: $("#prefCumple").checked });
+    if (!r.error) { yo = { ...yo, promos: $("#prefPromos").checked, cumple: $("#prefCumple").checked }; store.set(yo, CLI); }
+    toast(r.error ? "No se ha guardado" : "Guardado", r.error ? msg(r.error) : "");
   });
-  $("[data-reset]").addEventListener("click", () => {
-    store.del(); store.del(DRAFT); memory = null;
-    Object.entries(EJEMPLO).forEach(([n, v]) => (campo(n).value = v));
-    terminos.checked = false; campo("aceptarMarketing").checked = false; enviar.disabled = true;
-    ["nombre", "email"].forEach((n) => validar(n, false));
-    irA(1); store.del(DRAFT);
+  $(".qr-mydata").addEventListener("toggle", (e) => {
+    if (!e.target.open) return;
+    // sin leer los datos personales del servidor: se marcan según lo elegido en el alta en este móvil
+    $("#prefPromos").checked = !!yo?.promos;
+    $("#prefCumple").checked = !!yo?.cumple;
+  });
+  $("[data-baja]").addEventListener("click", async () => {
+    if (!confirm("¿Seguro? Se borran tu tarjeta, tus sellos y tus datos, y no se puede deshacer.")) return;
+    const r = await rpc("baja_cliente", { p_codigo: yo.codigo, p_token: yo.token });
+    if (r.error && r.error !== "no_encontrado") { toast("No se ha podido borrar", msg(r.error)); return; }
+    store.del(CLI); yo = null; tarjeta = null;
+    $(".qr-pass-code").innerHTML = "";
+    form.reset(); irA(1); botonPaso1();
     mostrar("alta");
-    toast("Demo reiniciada");
+    toast("Datos borrados", "Tu tarjeta ya no existe");
   });
 
   // ----- mi QR -----
   $("[data-copy]").addEventListener("click", async () => {
-    try { await navigator.clipboard.writeText(P.cliente); toast("Código copiado"); }
+    try { await navigator.clipboard.writeText(tarjeta.codigo); toast("Código copiado"); }
     catch { toast("Error", "No se pudo copiar el código"); }
   });
   $("[data-download]").addEventListener("click", () => {
-    // PNG de 600 px dibujado en el propio móvil a partir del SVG de la página (sin red)
-    const svg = $(".qr-pass-code svg").cloneNode(true);
+    const svg = $(".qr-pass-code svg")?.cloneNode(true);
+    if (!svg) return;
     svg.setAttribute("width", 600); svg.setAttribute("height", 600);
     const img = new Image();
     img.onload = () => {
       const cv = Object.assign(document.createElement("canvas"), { width: 600, height: 600 });
       const cx = cv.getContext("2d"); cx.imageSmoothingEnabled = false; cx.drawImage(img, 0, 0, 600, 600);
-      const a = Object.assign(document.createElement("a"), { download: `qr-${(getState()?.cliente?.nombre || "cliente").replace(/\s+/g, "-")}.png`, href: cv.toDataURL("image/png") });
+      const a = Object.assign(document.createElement("a"), { download: `tarjeta-${tarjeta.codigo}.png`, href: cv.toDataURL("image/png") });
       a.click();
-      toast("QR descargado", "Guárdalo en tus fotos para tenerlo siempre a mano");
+      toast("QR guardado", "Tenlo en tus fotos para enseñarlo en la barra");
     };
     img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(new XMLSerializer().serializeToString(svg));
   });
 
-  irA(borrador && Date.now() - borrador.timestamp < 3600e3 && borrador.step ? borrador.step : 1);
-  mostrar(getState()?.cliente ? "tarjeta" : "alta");
+  irA(vivo && borrador.step ? borrador.step : 1);
+  mostrar("cargando");
+  cargar().then((ok) => mostrar(ok ? "tarjeta" : "alta"));
+}
+
+// ============ 3b · únete: mini formulario → canal de WhatsApp ============
+if (view === "unete") {
+  const CANAL = JSON.parse($("#canal").textContent);
+  const form = $(".qr-join"), campo = (n) => form.elements[n];
+  const enviar = $('[type="submit"]', form), errForm = $(".qr-form-error");
+  const REGLAS = {
+    nombre: (v) => (v.trim().length >= 2 ? "" : "Tu nombre debe tener al menos 2 letras"),
+    telefono: (v) => (v.replace(/\D/g, "").length >= 9 ? "" : "El teléfono debe tener al menos 9 cifras"),
+    fecha_nacimiento: (v) => {
+      if (!v) return "";
+      const d = new Date(v), edad = (Date.now() - d) / (365.25 * 864e5);
+      return edad >= 16 && d.getFullYear() >= 1920 ? "" : "Revisa la fecha";
+    },
+  };
+  function validar(n, mostrarError = true) {
+    const el = campo(n), hint = $(`.qr-hint[data-for="${n}"]`), err = REGLAS[n](el.value);
+    el.classList.toggle("is-bad", !!err && mostrarError);
+    hint.className = "qr-hint" + (err && mostrarError ? " is-bad" : "");
+    hint.textContent = err && mostrarError ? err : "";
+    el.setAttribute("aria-invalid", String(!!err && mostrarError));
+    return !err;
+  }
+  const listo = () => (enviar.disabled = !(campo("aceptarPrivacidad").checked && campo("nombre").value && campo("telefono").value));
+  ["nombre", "telefono", "fecha_nacimiento"].forEach((n) => campo(n).addEventListener("input", () => { if (campo(n).classList.contains("is-bad")) validar(n); listo(); }));
+  ["nombre", "telefono", "fecha_nacimiento"].forEach((n) => campo(n).addEventListener("blur", () => campo(n).value && validar(n)));
+  const cumple = campo("aceptarCumple").closest(".qr-check");
+  const verCumple = () => { cumple.hidden = !campo("fecha_nacimiento").value; if (cumple.hidden) campo("aceptarCumple").checked = false; };
+  campo("fecha_nacimiento").addEventListener("input", verCumple); verCumple();
+  campo("aceptarPrivacidad").addEventListener("change", listo); listo();
+
+  const hecho = () => {
+    $('[data-view="alta"]').hidden = true; $('[data-view="hecho"]').hidden = false;
+    scrollTo(0, 0);
+  };
+  if (store.get("unido")) hecho();
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errForm.textContent = "";
+    if (!["nombre", "telefono", "fecha_nacimiento"].map((n) => validar(n)).every(Boolean)) { form.querySelector(".is-bad")?.focus(); return; }
+    if (!campo("aceptarPrivacidad").checked) { errForm.textContent = msg("privacidad"); return; }
+    const txt = enviar.innerHTML;
+    enviar.disabled = true; enviar.textContent = "Un momento…";
+    const r = await rpc("alta_cliente", {
+      p_negocio: SB.negocio,
+      p_nombre: campo("nombre").value.trim(),
+      p_telefono: campo("telefono").value,
+      p_email: null,
+      p_fecha_nacimiento: campo("fecha_nacimiento").value || null,
+      p_acepta_privacidad: true,
+      p_acepta_promos: campo("aceptarPromos").checked,
+      p_acepta_cumple: campo("aceptarCumple").checked && !!campo("fecha_nacimiento").value,
+    });
+    enviar.disabled = false; enviar.innerHTML = txt;
+    // si ya estaba apuntado con ese teléfono, también le mandamos al canal
+    if (r.error && r.error !== "ya_registrado") { errForm.textContent = msg(r.error); return; }
+    store.set({ at: Date.now() }, "unido");
+    hecho();
+    setTimeout(() => { location.href = CANAL; }, 900);
+  });
+}
+
+// ============ 4 · pantalla del personal ============
+if (view === "barra") {
+  const KEY_CLAVE = "personal";
+  let yo = store.get(KEY_CLAVE), actual = null;
+  const vistas = $$("[data-view]");
+  const card = $(".qr-staff-card"), err = $(".qr-search-error");
+  const mostrar = (cual) => {
+    vistas.forEach((v) => (v.hidden = v.dataset.view !== cual));
+    $("[data-salir]").hidden = cual !== "barra";
+  };
+
+  async function entrar(clave, silencioso) {
+    const r = await rpc("personal_entrar", { p_negocio: SB.negocio, p_clave: clave });
+    if (r.error) {
+      if (!silencioso || r.error === "clave") { store.del(KEY_CLAVE); yo = null; }
+      if (!silencioso) $('.qr-hint[data-for="clave"]').textContent = msg(r.error);
+      mostrar("entrar");
+      return false;
+    }
+    if (!SB.sellos && r.rol !== "admin") {
+      $('.qr-hint[data-for="clave"]').textContent = "Esta pantalla es solo para el dueño: usa su clave.";
+      store.del(KEY_CLAVE); yo = null; mostrar("entrar");
+      return false;
+    }
+    yo = { clave, rol: r.rol }; store.set(yo, KEY_CLAVE);
+    $(".qr-admin").hidden = r.rol !== "admin";
+    mostrar("barra");
+    if (r.rol === "admin") cargarClientes();
+    desdeEnlace();
+    return true;
+  }
+  $(".qr-login").addEventListener("submit", (e) => { e.preventDefault(); entrar($("#clave").value.trim()); });
+  $("[data-salir]").addEventListener("click", () => { store.del(KEY_CLAVE); yo = null; card.hidden = true; $("#clave").value = ""; $("#q").value = ""; $(".qr-admin").hidden = true; mostrar("entrar"); });
+
+  function pintar(t, aviso = "", tipo = "") {
+    if (actual?.codigo === t.codigo) t = { ...actual, ...t }; // conserva el final del teléfono
+    actual = t;
+    card.hidden = false;
+    const n = Math.min(t.sellos, t.objetivo);
+    $(".qr-staff-name").textContent = t.nombre;
+    $(".qr-staff-meta").textContent = `${t.codigo}${t.telefono_final ? ` · tel. …${t.telefono_final}` : ""}${t.ultimo_sello_at ? ` · último sello ${hace(t.ultimo_sello_at)}` : " · sin sellos aún"}`;
+    $(".qr-counter b", card).textContent = n;
+    $(".qr-counter span", card).textContent = `/${t.objetivo}`;
+    $(".qr-staff-bar").style.setProperty("--p", `${Math.round((n / t.objetivo) * 100)}%`);
+    const m = $(".qr-staff-msg");
+    m.textContent = aviso || (t.cupon ? `Tiene un premio pendiente: ${t.cupon.premio} (código ${t.cupon.codigo}).` : `Le faltan ${t.objetivo - n} para ${t.premio.toLowerCase()}.`);
+    m.className = "qr-staff-msg" + (tipo ? ` is-${tipo}` : "");
+    $("[data-sellar]").hidden = !!t.cupon;
+    $("[data-canjear]").hidden = !t.cupon;
+    $("[data-forzar]").hidden = true;
+    $(".qr-recover").hidden = true;
+  }
+  async function buscar(q) {
+    err.textContent = "";
+    const r = await rpc("personal_buscar", { p_negocio: SB.negocio, p_clave: yo.clave, p_q: q });
+    if (r.error) { card.hidden = true; err.textContent = msg(r.error); if (r.error === "clave") entrar("", true); return; }
+    pintar(r);
+    card.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  $(".qr-search").addEventListener("submit", (e) => { e.preventDefault(); const q = $("#q").value.trim(); if (q) buscar(q); });
+
+  async function sellar(forzar = false) {
+    const b = $(forzar ? "[data-forzar]" : "[data-sellar]");
+    b.disabled = true;
+    const r = await rpc("personal_sellar", { p_negocio: SB.negocio, p_clave: yo.clave, p_codigo: actual.codigo, p_forzar: forzar });
+    b.disabled = false;
+    if (r.error === "reciente") {
+      pintar(r, `Ya tiene un sello ${hace(r.ultimo_sello_at)}. Solo se pone uno por visita: si es otra visita, ponlo igualmente.`, "warn");
+      $("[data-sellar]").hidden = true;
+      $("[data-forzar]").hidden = false;
+      return;
+    }
+    if (r.error === "cupon_pendiente") { pintar(r, "Primero entrégale el premio que tiene pendiente.", "warn"); return; }
+    if (r.error) { toast("Error", msg(r.error)); return; }
+    pintar(r, r.completa ? `🎉 ¡Tarjeta completa! Ya puede pedir ${r.premio.toLowerCase()}.` : `✅ Sello puesto: lleva ${r.sellos} de ${r.objetivo}.`, "ok");
+    navigator.vibrate?.(60);
+  }
+  $("[data-sellar]").addEventListener("click", () => sellar(false));
+  $("[data-forzar]").addEventListener("click", () => sellar(true));
+  $("[data-canjear]").addEventListener("click", async () => {
+    if (!actual?.cupon) return;
+    const r = await rpc("personal_canjear", { p_negocio: SB.negocio, p_clave: yo.clave, p_cupon: actual.cupon.codigo });
+    if (r.error) { toast("No se ha podido", r.error === "ya_canjeado" ? "Ese premio ya se entregó." : r.error === "caducado" ? "El premio ha caducado." : msg(r.error)); return; }
+    pintar(r, `🍹 Premio entregado: ${r.premio}. Su tarjeta empieza de cero.`, "ok");
+  });
+  $("[data-recuperar]").addEventListener("click", async () => {
+    if (!confirm(`¿Generar un enlace nuevo para ${actual.nombre}? El de su móvil anterior dejará de funcionar.`)) return;
+    const r = await rpc("personal_recuperar", { p_negocio: SB.negocio, p_clave: yo.clave, p_codigo: actual.codigo });
+    if (r.error) { toast("Error", msg(r.error)); return; }
+    const box = $(".qr-recover");
+    $(".qr-pass-code", box).innerHTML = qrSvg(`${QR_BASE}sellos.html#c=${r.codigo}&t=${r.token}`, "QR para recuperar la tarjeta");
+    box.hidden = false;
+  });
+
+  // ----- solo dueño: clientes y exportar -----
+  let clientes = [];
+  async function cargarClientes() {
+    const r = await rpc("personal_clientes", { p_negocio: SB.negocio, p_clave: yo.clave });
+    if (r.error) return;
+    clientes = r.clientes;
+    const mes = new Date().getMonth(), promos = clientes.filter((c) => c.acepta_promos).length;
+    const cumples = clientes.filter((c) => c.acepta_cumple && c.fecha_nacimiento && new Date(c.fecha_nacimiento).getMonth() === mes)
+      .sort((a, b) => a.fecha_nacimiento.slice(8) - b.fecha_nacimiento.slice(8));
+    if (!SB.sellos) {
+      $(".qr-admin-list").innerHTML = clientes.slice(0, 50).map((c) => `<li><b>${esc(c.nombre)}</b> · <a href="https://wa.me/${esc(c.telefono.replace(/\D/g, ""))}" target="_blank" rel="noopener">${esc(c.telefono)}</a><span class="qr-dim"> · ${fecha(c.alta)}${c.acepta_promos ? " · acepta avisos" : ""}</span></li>`).join("") || '<li class="qr-dim">Todavía no se ha apuntado nadie.</li>';
+    }
+    $(".qr-admin-stats").textContent = `${clientes.length} cliente${clientes.length !== 1 ? "s" : ""} · ${promos} aceptan avisos · ${cumples.length} cumplen años este mes`;
+    $(".qr-admin-bdays").innerHTML = cumples.map((c) => `<li>🎂 <b>${esc(c.nombre)}</b> · ${Number(c.fecha_nacimiento.slice(8))} ${new Date(c.fecha_nacimiento).toLocaleDateString("es-ES", { month: "long" })} · <a href="https://wa.me/${esc(c.telefono.replace(/\D/g, ""))}" target="_blank" rel="noopener">WhatsApp</a></li>`).join("");
+  }
+  $$("[data-csv]").forEach((b) => b.addEventListener("click", async () => {
+    await cargarClientes();
+    const filas = clientes.filter((c) => b.dataset.csv === "todos" || c.acepta_promos);
+    const cols = [["nombre", "Nombre"], ["telefono", "Teléfono"], ["email", "Email"], ["fecha_nacimiento", "Nacimiento"],
+      ...(SB.sellos ? [["sellos", "Sellos ahora"], ["visitas", "Visitas"], ["ultimo_sello_at", "Última visita"]] : []),
+      ["acepta_promos", "Acepta avisos"], ["acepta_cumple", "Acepta felicitación"], ["alta", "Alta"], ["codigo", "Código"]].filter(([k]) => SB.sellos || k !== "codigo");
+    const cel = (v) => { const t = v === true ? "sí" : v === false ? "no" : v == null ? "" : String(v).replace(/T.*/, ""); return /[;"\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
+    const csv = "﻿" + [cols.map((c) => c[1]).join(";"), ...filas.map((f) => cols.map(([k]) => cel(f[k])).join(";"))].join("\r\n");
+    const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" })), download: `clientes-${SB.negocio}-${new Date().toISOString().slice(0, 10)}.csv` });
+    a.click();
+    toast("Descargado", `${filas.length} cliente${filas.length !== 1 ? "s" : ""}`);
+  }));
+
+  // al escanear el QR del cliente (barra.html#c=…) o del premio (#u=…) se abre aquí directamente
+  async function desdeEnlace() {
+    const h = new URLSearchParams(location.hash.slice(1)), q = h.get("c") || h.get("u");
+    if (q && yo) { $("#q").value = q; await buscar(q); history.replaceState(null, "", location.pathname); }
+  }
+  addEventListener("hashchange", desdeEnlace);
+  if (yo?.clave) entrar(yo.clave, true);
+  else mostrar("entrar");
 }

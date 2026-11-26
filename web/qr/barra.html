@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Clientes · Alegría 2.0</title>
+  <meta name="description" content="Pantalla del personal de Alegría 2.0.">
+  <meta name="theme-color" content="#0a0610">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="../assets/icons/favicon.ico" sizes="48x48">
+  <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="../site.webmanifest">
+  <link rel="preload" href="../assets/fonts/shrikhand-latin-486ff6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/fonts/fonts.css">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../pages.css">
+  <link rel="stylesheet" href="qr.css">
+</head>
+<body class="qr-app" data-qr="barra">
+  <div class="neon-gradient qr-bg" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="qr-shell">
+    <div class="qr-topbar">
+      <span class="qr-seal is-tiny"><img src="../assets/icons/sello.svg" width="1588" height="1610" alt=""></span>
+      <span class="qr-topbar-name">Alegría 2.0 · Clientes</span>
+      <button class="qr-back is-flat qr-logout" type="button" data-salir aria-label="Salir" hidden><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg></button>
+    </div>
+    <main class="qr-main qr-staff">
+      <!-- ENTRAR -->
+      <section class="qr-panel" data-view="entrar" hidden>
+        <h1 class="qr-title">Tus clientes</h1>
+        <p class="qr-muted">Solo para el dueño. Escribe tu clave una vez y este móvil la recuerda.</p>
+        <form class="qr-form qr-login">
+          <div class="field"><label for="clave">Clave del personal</label><input id="clave" name="clave" type="password" autocomplete="current-password" autocapitalize="none" spellcheck="false" placeholder="xxxx-xxxx-xxxx-xxxx"></div>
+          <p class="qr-hint is-bad" data-for="clave" role="alert"></p>
+          <button class="btn is-solid qr-wide-btn" type="submit">Entrar</button>
+        </form>
+      </section>
+
+      <!-- BUSCAR Y SELLAR -->
+      <div data-view="barra" hidden>
+        <section class="qr-panel" hidden>
+          <h1 class="qr-title">Poner un sello</h1>
+          <p class="qr-howto"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>Abre la cámara del móvil y escanea el QR del cliente: se abre aquí con su tarjeta.</p>
+          <form class="qr-search">
+            <label class="sr-only" for="q">Código, teléfono o código de premio</label>
+            <input id="q" name="q" type="search" placeholder="Código, teléfono o premio" autocapitalize="characters" autocomplete="off" spellcheck="false">
+            <button class="btn is-solid" type="submit" aria-label="Buscar"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button>
+          </form>
+          <p class="qr-hint is-bad qr-search-error" role="alert"></p>
+        </section>
+
+        <article class="qr-panel qr-staff-card" aria-live="polite" hidden data-off>
+          <div class="qr-stampcard-head">
+            <div><h2 class="qr-staff-name"></h2><p class="qr-muted qr-staff-meta"></p></div>
+            <p class="qr-counter"><b>0</b><span>/8</span></p>
+          </div>
+          <div class="qr-staff-bar" aria-hidden="true"><i></i></div>
+          <p class="qr-staff-msg"></p>
+          <div class="qr-staff-actions">
+            <button class="btn is-solid qr-wide-btn" type="button" data-sellar><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 22h14"/><path d="M19.27 13.73A2.5 2.5 0 0 0 17.5 13h-11A2.5 2.5 0 0 0 4 15.5V17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1.5c0-.66-.26-1.3-.73-1.77Z"/><path d="M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-3-3c-1.69 0-3 1-3 3s1 2 1 3.5V13"/></svg>Poner sello</button>
+            <button class="btn qr-wide-btn" type="button" data-forzar hidden>Poner sello igualmente</button>
+            <button class="btn is-solid qr-wide-btn is-gold" type="button" data-canjear hidden><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>Entregar premio</button>
+          </div>
+          <details class="qr-staff-more">
+            <summary>Cambió de móvil</summary>
+            <p class="qr-muted qr-small">Genera un enlace nuevo: el cliente escanea este QR con su móvil y recupera la tarjeta. El enlace anterior deja de funcionar.</p>
+            <button class="btn qr-wide-btn" type="button" data-recuperar>Generar enlace nuevo</button>
+            <div class="qr-recover" hidden><div class="qr-pass-code"></div></div>
+          </details>
+        </article>
+
+        <!-- SOLO DUEÑO -->
+        <section class="qr-panel qr-admin" hidden>
+          <h2 class="qr-h2"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Clientes</h2>
+          <p class="qr-admin-stats qr-muted"></p>
+          <ul class="qr-admin-bdays"></ul>
+          <h3 class="qr-admin-sub">Últimos apuntados</h3><ul class="qr-admin-list"></ul>
+          <div class="qr-staff-actions">
+            <button class="btn qr-wide-btn" type="button" data-csv="todos"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>Descargar todos</button>
+            <button class="btn qr-wide-btn" type="button" data-csv="promos"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>Solo con avisos</button>
+          </div>
+          <p class="qr-muted qr-small">Se descarga en CSV, que abre Excel. Manda avisos o felicitaciones solo a quien lo haya aceptado: lo indica cada fila.</p>
+        </section>
+      </div>
+    </main>
+  </div>
+  <div class="qr-toast" role="status" aria-live="polite"></div>
+  <script type="application/json" id="supabase">{"url": "https://zbcjhcvjnpigesvfyibe.supabase.co", "key": "sb_publishable_QKlh63AKSawSyepIhJy_Ng_8tqDXrwd", "negocio": "alegria-2-0", "sellos": false}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+  <script type="module" src="qr.js"></script>
+</body>
+</html>

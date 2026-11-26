@@ -29,6 +29,7 @@ GRAD = '<div class="neon-gradient" aria-hidden="true"><i></i><i></i><i></i><i></
 def header(brand=True):
     # el sello del local (marca/logo) hace de logo en todas las páginas, también en la portada
     left = '<a class="nav-seal" href="index.html" aria-label="Alegría 2.0, inicio"><img src="assets/icons/sello.svg" width="1588" height="1610" alt=""></a>\n        ' + \
+        '<a class="hero-pill is-home" href="index.html">Inicio</a>\n        ' + \
         "\n        ".join(f'<a class="hero-pill" href="{h}">{t}</a>' for h, t in NAV)
     menu = "\n    ".join(f'<a href="{h}">{t}</a>' for h, t in [("index.html", "Inicio")] + NAV + [("contacto.html", "Contacto")])
     return f'''  <header class="site-header">
@@ -460,6 +461,21 @@ legal("aviso-legal", "Aviso legal", "Aviso legal",
         <p>Estas condiciones se rigen por la legislación española. Para cualquier controversia serán competentes los juzgados y tribunales que correspondan según la normativa de consumidores y usuarios.</p>
 ''')
 
+# lo que dice la privacidad del QR depende de si la tarjeta de sellos está activa (SELLOS en qr_mesa.py)
+SELLOS_ON = bool(re.search(r"^SELLOS = True", (pathlib.Path(__file__).resolve().parent / "qr_mesa.py").read_text(), re.M))
+CLUB_NOMBRE = "Tarjeta de sellos" if SELLOS_ON else "Familia Alegría"
+CLUB_INTRO = ("la <b>tarjeta de sellos</b> (la pantalla a la que lleva el QR de las mesas), y solo si te das de alta" if SELLOS_ON
+              else "el formulario <b>«Únete a la familia Alegría»</b> (la pantalla a la que lleva el QR de las mesas), y solo si lo envías")
+CLUB_DATOS = ("nombre, teléfono, y si nos los das, email y fecha de nacimiento. También guardamos tus visitas (la fecha de cada sello) y tus premios." if SELLOS_ON
+              else "nombre, teléfono (WhatsApp) y, si nos la das, tu fecha de nacimiento, junto con las casillas que marcaste y cuándo.")
+CLUB_FIN = ("gestionar tu tarjeta (sellos y premios) e identificarte si cambias de móvil." if SELLOS_ON
+            else "tenerte en nuestra lista de clientes del local.")
+CLUB_BAJA = ("Puedes borrarla tú cuando quieras con «Borrar mi tarjeta y mis datos»: se elimina al momento." if SELLOS_ON
+             else "Puedes pedir que te borremos cuando quieras escribiéndonos por WhatsApp.")
+CLUB_PREF = "desde «Mis datos y avisos» en tu tarjeta o escribiéndonos" if SELLOS_ON else "escribiéndonos por WhatsApp"
+CLUB_MOVIL = ("          <li><b>En tu móvil:</b> el navegador guarda un código de tu tarjeta para abrirla sin volver a registrarte. No es una cookie de seguimiento y lo puedes borrar desde tu navegador.</li>\n" if SELLOS_ON else "")
+COOKIES_CLUB = ('\n        <p>Si te das de alta en la <a href="privacidad.html#club">tarjeta de sellos</a>, tu navegador guarda el código de tu tarjeta (almacenamiento local, no una cookie) para abrirla sin volver a registrarte. Es imprescindible para el servicio que has pedido, no sirve para seguirte y se borra si borras los datos del navegador o tu tarjeta.</p>' if SELLOS_ON
+                else '\n        <p>Si te unes desde el formulario del QR, tu navegador recuerda que ya lo has hecho (almacenamiento local, no una cookie) para no pedírtelo otra vez. No sirve para seguirte y se borra si borras los datos del navegador.</p>')
 legal("privacidad", "Política de privacidad", "Privacidad",
       "Política de privacidad de Alegría 2.0: qué datos tratamos, para qué, durante cuánto tiempo y cómo ejercer tus derechos.", f'''
         <h2>1. Responsable del tratamiento</h2>
@@ -468,9 +484,18 @@ legal("privacidad", "Política de privacidad", "Privacidad",
           <li><b>Dirección:</b> {DOMICILIO}</li>
           <li><b>Contacto:</b> {EMAIL} · 625 92 44 29</li>
         </ul>
-        <h2>2. Esta web no recoge datos por sí misma</h2>
-        <p>No hay registro de usuarios, no hay analítica ni publicidad y ningún formulario envía datos a un servidor nuestro. El formulario de la página <a href="celebraciones.html">Celebraciones</a> solo prepara un mensaje en tu dispositivo y abre WhatsApp: no se guarda nada hasta que tú decides enviarlo.</p>
+        <h2>2. Qué datos recoge esta web</h2>
+        <p>No hay analítica ni publicidad. El único sitio donde dejas datos es {CLUB_INTRO}. El formulario de la página <a href="celebraciones.html">Celebraciones</a> no guarda nada: prepara un mensaje en tu dispositivo y abre WhatsApp.</p>
         <h2>3. Qué datos tratamos y para qué</h2>
+        <h3 id="club">3.1 {CLUB_NOMBRE}</h3>
+        <ul>
+          <li><b>Datos:</b> {CLUB_DATOS}</li>
+          <li><b>Para qué:</b> {CLUB_FIN} Solo si marcas las casillas correspondientes: avisarte de fiestas y promociones por WhatsApp, y felicitarte por tu cumpleaños. Entrar en el canal de WhatsApp es aparte: lo haces tú en WhatsApp y puedes salir cuando quieras.</li>
+          <li><b>Base legal:</b> tu consentimiento (art. 6.1.a del RGPD), que puedes retirar en cualquier momento {CLUB_PREF}.</li>
+          <li><b>Conservación:</b> mientras sigas con nosotros. Si en 2 años no hay ningún contacto, borramos tus datos. {CLUB_BAJA}</li>
+          <li><b>Dónde se guardan:</b> en una base de datos de Supabase alojada en la Unión Europea (París), que actúa como encargado del tratamiento. No cedemos tus datos a nadie ni los usamos para otros negocios.</li>
+{CLUB_MOVIL}        </ul>
+        <h3>3.2 Reservas y consultas</h3>
         <p>Si nos escribes por WhatsApp o nos llamas, tratamos los datos que nos des (nombre, teléfono, fecha, número de personas y lo que nos cuentes) con una única finalidad: <b>gestionar tu reserva o responder a tu consulta</b>.</p>
         <ul>
           <li><b>Base legal:</b> la aplicación de medidas precontractuales a petición tuya (art. 6.1.b del RGPD) y, para lo demás, tu consentimiento al escribirnos (art. 6.1.a).</li>
@@ -486,7 +511,7 @@ legal("privacidad", "Política de privacidad", "Privacidad",
         <h2>5. Tus derechos</h2>
         <p>Puedes pedir el acceso, la rectificación o la supresión de tus datos, oponerte a su tratamiento, pedir su limitación o su portabilidad escribiendo a {EMAIL} o por WhatsApp al 625 92 44 29. Si crees que no hemos atendido bien tu solicitud, puedes reclamar ante la Agencia Española de Protección de Datos en <a href="https://www.aepd.es" target="_blank" rel="noopener">www.aepd.es</a>.</p>
         <h2>6. Menores</h2>
-        <p>Los servicios del local están dirigidos a mayores de 18 años. No tratamos conscientemente datos de menores.</p>
+        <p>Los servicios del local están dirigidos a mayores de 18 años. No tratamos conscientemente datos de menores; el formulario del QR no admite fechas de nacimiento de menores de 16 años.</p>
 ''')
 
 legal("cookies", "Política de cookies", "Cookies",
@@ -494,7 +519,7 @@ legal("cookies", "Política de cookies", "Cookies",
         <h2>1. Qué son las cookies</h2>
         <p>Son pequeños archivos que algunas webs guardan en tu navegador para recordar información sobre tu visita.</p>
         <h2>2. Cookies de esta web</h2>
-        <p><b>Esta web no usa cookies propias</b>, ni de analítica, ni de publicidad, ni de redes sociales. Por eso no te mostramos un aviso de cookies al entrar.</p>
+        <p><b>Esta web no usa cookies propias</b>, ni de analítica, ni de publicidad, ni de redes sociales. Por eso no te mostramos un aviso de cookies al entrar.</p>{COOKIES_CLUB}
         <h2>3. Cookies de terceros</h2>
         <p>Solo hay un caso: el mapa de Google de la página de <a href="contacto.html">Contacto</a>. No se carga hasta que pulsas «Ver el mapa aquí». Si lo haces, Google puede instalar sus propias cookies (por ejemplo, para recordar preferencias o medir el uso de Maps). Puedes consultar cuáles en la <a href="https://policies.google.com/technologies/cookies?hl=es" target="_blank" rel="noopener">política de cookies de Google</a>.</p>
         <p>Si prefieres no cargarlo, puedes abrir la dirección directamente en la app de Google Maps con el botón «Cómo llegar».</p>

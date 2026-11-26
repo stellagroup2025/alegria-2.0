@@ -10,7 +10,7 @@
 .menu-toggle { display: none; cursor: pointer; gap: 8px; }
 .menu-toggle i { position: relative; width: 14px; height: 8px; border-block: 1.5px solid currentColor; }
 @media (max-width: 899px) {
-  .hero-nav-left .hero-pill:nth-child(n + 2) { display: none; }
+  .hero-nav-left .hero-pill:not(.is-home) { display: none; }
   .menu-toggle { display: inline-flex; }
 }
 .menu-overlay { position: fixed; inset: 0; z-index: 25; display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 90px 24px 40px; background: rgba(10, 6, 16, 0.94); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); opacity: 0; visibility: hidden; transition: opacity 0.35s ease, visibility 0s linear 0.35s; }
@@ -267,3 +267,6 @@
 /* el H1 envuelve el rótulo de neón (más el texto para buscadores) */
 .page-h1 { margin: 0; font: inherit; }
 .page-h1 .neon-sign { display: block; }
+
+/* «Inicio» visible en móvil: en pantallas muy estrechas Contacto queda dentro del menú */
+@media (max-width: 369px) { .hero-nav-right-group .hero-nav-right { display: none; } }

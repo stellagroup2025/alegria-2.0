@@ -259,3 +259,59 @@
 .qr-filter-list button, .qr-allergen { display: inline-flex; align-items: center; gap: 6px; }
 .qr-featured { scroll-padding-inline: 16px; }
 .qr-cover-name { overflow: visible; text-overflow: clip; }
+
+/* ===== tarjeta real: carga, mis datos ===== */
+.qr-loading { padding: 48px 0; text-align: center; }
+.qr-small { font-size: 12px; }
+.qr-form-error:empty { display: none; }
+.qr-mydata { margin-top: 18px; padding: 0 18px; }
+.qr-mydata > summary { padding: 16px 0; cursor: pointer; font-weight: 600; font-size: 14px; list-style-position: inside; }
+.qr-mydata[open] { padding-bottom: 18px; }
+.qr-prefs { display: grid; gap: 10px; margin-bottom: 12px; }
+.qr-danger { margin-top: 14px; padding: 10px 0; border: 0; background: none; color: #ff9aac; font: inherit; font-size: 13px; text-decoration: underline; cursor: pointer; }
+
+/* ===== pantalla de barra ===== */
+.qr-logout { margin-left: auto; }
+.qr-staff { display: grid; align-content: start; gap: 16px; padding-bottom: 40px; }
+.qr-staff > .qr-panel, .qr-staff [data-view] > .qr-panel { padding: 20px; }
+.qr-staff [data-view="barra"] { display: grid; align-content: start; gap: 16px; }
+.qr-staff [data-view="barra"][hidden] { display: none; }
+.qr-staff .qr-title { margin-bottom: 8px; }
+.qr-search { display: flex; gap: 8px; margin-top: 14px; }
+.qr-search input { flex: 1; min-width: 0; min-height: 48px; padding: 0 14px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.25); background: rgba(0, 0, 0, 0.3); color: #fff; font: inherit; font-size: 16px; letter-spacing: 0.04em; }
+.qr-search input:focus { outline: 2px solid var(--cyan); outline-offset: 1px; }
+.qr-search .btn { min-width: 52px; padding: 0 14px; }
+.qr-search-error:empty { display: none; }
+.qr-staff-name { font-family: var(--font-display); font-weight: 400; font-size: 24px; line-height: 1.15; overflow-wrap: anywhere; }
+.qr-staff-bar { height: 10px; margin: 16px 0 12px; overflow: hidden; border-radius: 10px; background: rgba(255, 255, 255, 0.1); }
+.qr-staff-bar i { display: block; width: var(--p, 0%); height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--magenta), var(--cyan)); box-shadow: 0 0 12px var(--magenta); transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+.qr-staff-msg { margin-bottom: 14px; font-size: 15px; line-height: 1.5; }
+.qr-staff-msg.is-ok { color: #7dffb0; }
+.qr-staff-msg.is-warn { color: var(--gold); }
+.qr-staff-actions { display: grid; gap: 10px; }
+.qr-staff-actions .btn { min-height: 54px; font-size: 16px; }
+.qr-staff-actions .btn[hidden] { display: none; }
+.btn.is-gold { background: var(--gold); border-color: var(--gold); color: var(--night); box-shadow: 0 0 18px rgba(255, 210, 63, 0.45); }
+.qr-staff-more { margin-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.12); }
+.qr-staff-more > summary { padding: 14px 0 4px; cursor: pointer; font-size: 13px; color: var(--ink-dim); }
+.qr-staff-more .btn { margin-top: 10px; }
+.qr-recover { margin: 14px auto 0; max-width: 240px; }
+.qr-recover .qr-pass-code { padding: 10px; border-radius: 16px; background: #fff; }
+.qr-recover svg { display: block; width: 100%; height: auto; }
+.qr-admin .qr-h2 { margin-bottom: 10px; }
+.qr-admin .qr-h2::before { display: none; }
+.qr-admin .qr-h2 .ico { fill: none; color: var(--cyan); filter: none; }
+.qr-admin-stats { margin-bottom: 10px; }
+.qr-admin-bdays { display: grid; gap: 6px; margin: 0 0 14px; padding: 0; list-style: none; font-size: 14px; }
+.qr-admin-bdays a { color: var(--cyan); }
+
+/* ===== únete ===== */
+.qr-join-lead { margin: 8px 0 18px; }
+.qr-join { display: grid; gap: 14px; }
+.qr-join .qr-check[hidden] { display: none; }
+.qr-join .btn .ico, .qr-canal-btn .ico { width: 20px; height: 20px; }
+.qr-joined { display: grid; gap: 14px; text-align: center; }
+.qr-joined[hidden] { display: none; }
+.qr-admin-sub { margin: 4px 0 8px; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim); }
+.qr-admin-list { display: grid; gap: 8px; margin: 0 0 16px; padding: 0; list-style: none; font-size: 14px; overflow-wrap: anywhere; }
+.qr-admin-list a { color: var(--cyan); white-space: nowrap; }

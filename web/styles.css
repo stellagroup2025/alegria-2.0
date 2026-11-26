@@ -63,7 +63,7 @@ button { font: inherit; color: inherit; }
 .hero-nav-left { display: flex; gap: 8px; }
 .hero-pill { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 14px; border-radius: 100px; border: 1px solid rgba(255, 255, 255, 0.9); background: rgba(10, 6, 16, 0.25); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-family: var(--font-body); font-weight: 500; font-size: 13px; color: var(--ink); text-decoration: none; white-space: nowrap; pointer-events: auto; transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
 .hero-pill:hover { background: #fff; color: var(--night); box-shadow: 0 0 22px rgba(255, 47, 179, 0.6); }
-@media (max-width: 639px) { .hero-nav { padding: 0 10px; top: 18px; } .hero-nav-left .hero-pill:nth-child(n + 2) { display: none; } .hero-pill { font-size: 12px; padding: 8px 12px; } }
+@media (max-width: 639px) { .hero-nav { padding: 0 10px; top: 18px; } .hero-nav-left .hero-pill:not(.is-home) { display: none; } .hero-pill { font-size: 12px; padding: 8px 12px; } }
 
 /* ======================================================================
    1-3 · HERO / CARRUSEL / DETALLE
