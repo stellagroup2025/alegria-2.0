@@ -1,0 +1,375 @@
+{
+  "_nota": "Carta DE EJEMPLO (la de carta.html, que sale de este mismo archivo). Sin precios: la web dice «Precios en barra». Cambiar por la real del cliente.",
+  "categorias": [
+    {
+      "id": "cocteles",
+      "nombre": "Cócteles de la casa",
+      "descripcion": "Una copa para cada experiencia. Pregunta en barra.",
+      "orden": 0,
+      "activa": true,
+      "platos": [
+        {
+          "id": "coctel-karaoke",
+          "id_categoria": "cocteles",
+          "nombre": "Cosmopolitan",
+          "descripcion": "Vodka, licor de naranja, arándano rojo y lima. Para afinar la voz antes de coger el micro.",
+          "precio": null,
+          "imagen_url": "/assets/img/copas/karaoke.webp",
+          "alergenos": [],
+          "etiquetas": [
+            "vegano"
+          ],
+          "destacado": true,
+          "disponible": true,
+          "orden": 0
+        },
+        {
+          "id": "coctel-dj",
+          "id_categoria": "cocteles",
+          "nombre": "Gin-tonic azul",
+          "descripcion": "Ginebra, tónica y un toque azul con piel de limón. Fresco, largo y para toda la noche.",
+          "precio": null,
+          "imagen_url": "/assets/img/copas/dj.webp",
+          "alergenos": [],
+          "etiquetas": [],
+          "destacado": false,
+          "disponible": true,
+          "orden": 1
+        },
+        {
+          "id": "coctel-salsa",
+          "id_categoria": "cocteles",
+          "nombre": "Daiquiri de fresa",
+          "descripcion": "Ron blanco, fresa y lima, granizado. Dulce, frío y con ritmo.",
+          "precio": null,
+          "imagen_url": "/assets/img/copas/salsa.webp",
+          "alergenos": [],
+          "etiquetas": [
+            "vegano"
+          ],
+          "destacado": false,
+          "disponible": true,
+          "orden": 2
+        },
+        {
+          "id": "coctel-viejoteca",
+          "id_categoria": "cocteles",
+          "nombre": "Mojito",
+          "descripcion": "Ron blanco, lima, hierbabuena, azúcar y soda. El clásico que nunca falla.",
+          "precio": null,
+          "imagen_url": "/assets/img/copas/viejoteca.webp",
+          "alergenos": [],
+          "etiquetas": [
+            "vegano"
+          ],
+          "destacado": true,
+          "disponible": true,
+          "orden": 3
+        },
+        {
+          "id": "coctel-cumple",
+          "id_categoria": "cocteles",
+          "nombre": "Copa de cava",
+          "descripcion": "Cava bien frío en copa de cristal tallado. Para el brindis del cumpleañero.",
+          "precio": null,
+          "imagen_url": "/assets/img/copas/cumple.webp",
+          "alergenos": [
+            "sulfitos"
+          ],
+          "etiquetas": [],
+          "destacado": false,
+          "disponible": true,
+          "orden": 4
+        }
+      ]
+    },
+    {
+      "id": "cubos",
+      "nombre": "Cubos de cerveza",
+      "descripcion": null,
+      "orden": 1,
+      "activa": true,
+      "platos": [
+        {
+          "id": "cubo-botellines",
+          "id_categoria": "cubos",
+          "nombre": "Cubo de botellines",
+          "descripcion": "Para compartir",
+          "precio": null,
+          "imagen_url": null,
+          "alergenos": [
+            "gluten"
+          ],
+          "etiquetas": [],
+          "destacado": false,
+          "disponible": true,
+          "orden": 0
+        },
+        {
+          "id": "corona",
+          "id_categoria": "cubos",
+          "nombre": "Corona",
+          "descripcion": "Bien fría",
+          "precio": null,
+          "imagen_url": null,
+          "alergenos": [
+            "gluten"
+          ],
+          "etiquetas": [],
+          "destacado": false,
+          "disponible": true,
+          "orden": 1
+        },
+        {
+          "id": "mahou",
+          "id_categoria": "cubos",
+          "nombre": "Mahou",
+          "descripcion": "La de aquí",
+          "precio": null,
+          "imagen_url": null,
+          "alergenos": [
+            "gluten"
+          ],
+          "etiquetas": [],
+          "destacado": false,
+          "disponible": true,
+          "orden": 2
+        },
+        {
+          "id": "cerveza-sin",
+          "id_categoria": "cubos",
+          "nombre": "Cerveza sin alcohol",
+          "descripcion": "También",
+          "precio": null,
+          "imagen_url": null,
+          "alergenos": [
+            "gluten"
+          ],
+          "etiquetas": [],
+          "destacado": false,
+          "disponible": true,
+          "orden": 3
+        }
+      ]
+    },
+    {
+      "id": "copas",
+      "nombre": "Copas",
+      "descripcion": null,
+      "orden": 2,
+      "activa": true,
+      "platos": [
+        {
+          "id": "ron",
+          "id_categoria": "copas",
+          "nombre": "Ron",
+          "descripcion": "Con cola o lo que pidas",
+          "precio": null,
+          "imagen_url": null,
+          "alergenos": [],
+          "etiquetas": [],
+          "destacado": false,
+          "disponible": true,
+          "orden": 0
+        },
+        {
+          "id": "whisky",
+          "id_categoria": "copas",
+          "nombre": "Whisky",
+          "descripcion": "Solo o combinado",
+          "precio": null,
+          "imagen_url": null,
+          "alergenos": [],
+          "etiquetas": [],
+          "destacado": false,
+          "disponible": true,
+          "orden": 1
+        },
+        {
+          "id": "ginebra",
+          "id_categoria": "copas",
+          "nombre": "Ginebra",
+          "descripcion": "Con tónica",
+          "precio": null,
+          "imagen_url": null,
+          "alergenos": [],
+          "etiquetas": [],
+          "destacado": false,
+          "disponible": true,
+          "orden": 2
+        },
+        {
+          "id": "vodka",
+          "id_categoria": "copas",
+          "nombre": "Vodka",
+          "descripcion": "Con refresco o zumo",
+          "precio": null,
+          "imagen_url": null,
+          "alergenos": [],
+          "etiquetas": [],
+          "destacado": false,
+          "disponible": true,
+          "orden": 3
+        }
+      ]
+    },
+    {
+      "id": "chupitos",
+      "nombre": "Chupitos y aguardiente",
+      "descripcion": null,
+      "orden": 3,
+      "activa": true,
+      "platos": [
+        {
+          "id": "aguardiente",
+          "id_categoria": "chupitos",
+          "nombre": "Aguardiente Antioqueño",
+          "descripcion": "El de la tierra",
+          "precio": null,
+          "imagen_url": null,
+          "alergenos": [],
+          "etiquetas": [],
+          "destacado": false,
+          "disponible": true,
+          "orden": 0
+        },
+        {
+          "id": "chupitos-casa",
+          "id_categoria": "chupitos",
+          "nombre": "Chupitos de la casa",
+          "descripcion": "Para el brindis",
+          "precio": null,
+          "imagen_url": null,
+          "alergenos": [],
+          "etiquetas": [],
+          "destacado": false,
+          "disponible": true,
+          "orden": 1
+        },
+        {
+          "id": "botella-mesa",
+          "id_categoria": "chupitos",
+          "nombre": "Botella para la mesa",
+          "descripcion": "Pregunta en barra",
+          "precio": null,
+          "imagen_url": null,
+          "alergenos": [],
+          "etiquetas": [],
+          "destacado": false,
+          "disponible": true,
+          "orden": 2
+        }
+      ]
+    },
+    {
+      "id": "sin-alcohol",
+      "nombre": "Sin alcohol",
+      "descripcion": null,
+      "orden": 4,
+      "activa": true,
+      "platos": [
+        {
+          "id": "refrescos",
+          "id_categoria": "sin-alcohol",
+          "nombre": "Refrescos",
+          "descripcion": "Cola, naranja, limón",
+          "precio": null,
+          "imagen_url": null,
+          "alergenos": [],
+          "etiquetas": [
+            "vegano",
+            "sin_gluten"
+          ],
+          "destacado": false,
+          "disponible": true,
+          "orden": 0
+        },
+        {
+          "id": "zumos",
+          "id_categoria": "sin-alcohol",
+          "nombre": "Zumos",
+          "descripcion": "Variados",
+          "precio": null,
+          "imagen_url": null,
+          "alergenos": [],
+          "etiquetas": [
+            "vegano",
+            "sin_gluten"
+          ],
+          "destacado": false,
+          "disponible": true,
+          "orden": 1
+        },
+        {
+          "id": "agua",
+          "id_categoria": "sin-alcohol",
+          "nombre": "Agua",
+          "descripcion": "Con o sin gas",
+          "precio": null,
+          "imagen_url": null,
+          "alergenos": [],
+          "etiquetas": [
+            "vegano",
+            "sin_gluten"
+          ],
+          "destacado": false,
+          "disponible": true,
+          "orden": 2
+        }
+      ]
+    },
+    {
+      "id": "fiestas",
+      "nombre": "En las fiestas especiales",
+      "descripcion": "Comida colombiana los días de Viejoteca.",
+      "orden": 5,
+      "activa": true,
+      "platos": [
+        {
+          "id": "empanada",
+          "id_categoria": "fiestas",
+          "nombre": "Empanada colombiana",
+          "descripcion": "De maíz, frita y crujiente.",
+          "precio": null,
+          "imagen_url": null,
+          "alergenos": [],
+          "etiquetas": [],
+          "destacado": false,
+          "disponible": false,
+          "orden": 0
+        },
+        {
+          "id": "chorizo-arepa",
+          "id_categoria": "fiestas",
+          "nombre": "Chorizo con arepa",
+          "descripcion": "El clásico de las Viejotecas.",
+          "precio": null,
+          "imagen_url": null,
+          "alergenos": [
+            "lacteos"
+          ],
+          "etiquetas": [],
+          "destacado": false,
+          "disponible": false,
+          "orden": 1
+        },
+        {
+          "id": "papa-rellena",
+          "id_categoria": "fiestas",
+          "nombre": "Papa rellena",
+          "descripcion": "Patata rellena de carne y huevo, rebozada.",
+          "precio": null,
+          "imagen_url": null,
+          "alergenos": [
+            "huevos",
+            "gluten"
+          ],
+          "etiquetas": [],
+          "destacado": false,
+          "disponible": false,
+          "orden": 2
+        }
+      ]
+    }
+  ]
+}

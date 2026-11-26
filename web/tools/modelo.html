@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>Prueba de modelo 3D</title>
+<style>body{margin:0;background:#0a0610;color:#fff;font:13px system-ui}canvas{display:block;width:100vw;height:100vh}#ui{position:fixed;left:12px;top:12px;display:flex;gap:6px}button{background:#222;color:#fff;border:1px solid #666;border-radius:20px;padding:6px 12px;cursor:pointer}</style>
+<script type="importmap">{ "imports": { "three": "../assets/vendor/three.module.min.js" } }</script>
+</head><body><div id="ui"></div><canvas></canvas>
+<script type="module">
+// Visor: carga los GLB de prueba con la misma luz que la web, sobre el fondo de neón, girando.
+import * as THREE from "three";
+import { GLTFLoader } from "../assets/vendor/GLTFLoader.js";
+import { RGBELoader } from "../assets/vendor/RGBELoader.js";
+const files = new URLSearchParams(location.search).get("m")?.split(",") || [];
+const canvas = document.querySelector("canvas");
+const r = new THREE.WebGLRenderer({ canvas, antialias: true });
+r.setPixelRatio(Math.min(devicePixelRatio, 1.5)); r.toneMapping = THREE.ACESFilmicToneMapping; r.outputColorSpace = THREE.SRGBColorSpace;
+const scene = new THREE.Scene();
+const bg = document.createElement("canvas"); bg.width = 512; bg.height = 512; const g = bg.getContext("2d");
+const grd = g.createRadialGradient(256, 290, 0, 256, 290, 300); grd.addColorStop(0, "#8a1d63"); grd.addColorStop(0.45, "#3a0b2c"); grd.addColorStop(1, "#0a0610");
+g.fillStyle = grd; g.fillRect(0, 0, 512, 512); const bt = new THREE.CanvasTexture(bg); bt.colorSpace = THREE.SRGBColorSpace;
+const back = new THREE.Mesh(new THREE.PlaneGeometry(9, 6), new THREE.MeshBasicMaterial({ map: bt, toneMapped: false })); back.position.z = -2.4; scene.add(back);
+const cam = new THREE.PerspectiveCamera(30, 1, 0.1, 50); cam.position.set(0, 0, 3.6);
+const pm = new THREE.PMREMGenerator(r);
+new RGBELoader().load("../assets/hdr/studio_small_09_1k.hdr", (h) => { h.mapping = THREE.EquirectangularReflectionMapping; scene.environment = pm.fromEquirectangular(h).texture; });
+const key = new THREE.DirectionalLight(0xfff4ea, 2.4); key.position.set(1.8, 3.2, 3);
+const rimL = new THREE.SpotLight(0xff2fb3, 40, 12, 0.6, 0.8); rimL.position.set(-3.2, 1.2, -1.8);
+const rimR = new THREE.SpotLight(0x19e6ff, 40, 12, 0.6, 0.8); rimR.position.set(3.2, -0.2, -1.8);
+scene.add(key, rimL, rimR, new THREE.HemisphereLight(0xffffff, 0x1a0d24, 0.35));
+const holders = [];
+const hybrid = new URLSearchParams(location.search).has("hybrid");
+// Vidrio real donde la textura es gris (poco saturada); color opaco donde es líquido o piel de naranja.
+function makeHybrid(mat) {
+  const img = mat.map.image, w = img.width, h = img.height;
+  const c = document.createElement("canvas"); c.width = w; c.height = h; const x = c.getContext("2d"); x.drawImage(img, 0, 0);
+  const d = x.getImageData(0, 0, w, h), tm = new ImageData(w, h);
+  for (let i = 0; i < d.data.length; i += 4) {
+    const r = d.data[i], g2 = d.data[i + 1], b = d.data[i + 2], mx = Math.max(r, g2, b), mn = Math.min(r, g2, b);
+    const sat = mx ? (mx - mn) / mx : 0, glass = Math.max(0, Math.min(1, 1 - (sat - 0.12) / 0.18));
+    tm.data[i] = tm.data[i + 1] = tm.data[i + 2] = glass * 255; tm.data[i + 3] = 255;
+    // el gris pintado del vidrio se aclara a casi blanco para que no oscurezca lo que se ve a través
+    d.data[i] = r + (245 - r) * glass; d.data[i + 1] = g2 + (248 - g2) * glass; d.data[i + 2] = b + (255 - b) * glass;
+  }
+  x.putImageData(d, 0, 0);
+  const tc = document.createElement("canvas"); tc.width = w; tc.height = h; tc.getContext("2d").putImageData(tm, 0, 0);
+  const map = new THREE.CanvasTexture(c); map.colorSpace = THREE.SRGBColorSpace; map.flipY = false;
+  const tmap = new THREE.CanvasTexture(tc); tmap.flipY = false;
+  // material nuevo (el del GLB trae defines que rompen el sombreador de transmisión)
+  return new THREE.MeshPhysicalMaterial({ map, normalMap: mat.normalMap, transmission: 1, transmissionMap: tmap, thickness: 0.04, ior: 1.5, roughness: 0.05, metalness: 0, clearcoat: 0.6, envMapIntensity: 0.8 });
+}
+files.forEach((f, i) => new GLTFLoader().load(f, (gl) => {
+  const m = gl.scene, box = new THREE.Box3().setFromObject(m), size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
+  if (hybrid) m.traverse((o) => { if (o.isMesh) o.material = makeHybrid(o.material); });
+  m.position.sub(c); const h = new THREE.Group(); h.add(m); h.scale.setScalar(1.15 / size.y);
+  h.position.x = (i - (files.length - 1) / 2) * 1.25; scene.add(h); holders.push(h);
+  let tris = 0; m.traverse((o) => { if (o.isMesh) { tris += o.geometry.index ? o.geometry.index.count / 3 : o.geometry.attributes.position.count / 3; console.log(f, o.name, o.material.type, o.material.transparent, o.material.opacity, !!o.material.map); } });
+  const b = document.createElement("button"); b.textContent = f.split("/").pop() + " · " + Math.round(tris / 1000) + "k tri"; document.getElementById("ui").append(b);
+}));
+function size() { const w = innerWidth, h = innerHeight; r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+size(); addEventListener("resize", size);
+window.spin = true; window.rotY = 0;
+r.setAnimationLoop((t) => { holders.forEach((h) => (h.rotation.y = window.spin ? t / 1600 : window.rotY)); r.render(scene, cam); });
+</script></body></html>

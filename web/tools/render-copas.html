@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>Render de copas</title>
+<script type="importmap">{ "imports": { "three": "../assets/vendor/three.module.min.js" } }</script>
+</head><body style="margin:0;background:#222">
+<script type="module">
+// Genera assets/img/copas/<noche>.webp: cada copa con la luz de la web, recortada con alfa real
+// (negro/blanco). Se guardan con PUT en tools/serve.py. Abrir tras regenerar modelos.
+import * as THREE from "three";
+import { RGBELoader } from "../assets/vendor/RGBELoader.js";
+import { loadGlasses, buildGlass } from "../js/models.js";
+import { NOCHES } from "../js/data.js";
+const W = 900, H = 1200;
+const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+r.setSize(W, H); r.setPixelRatio(1); r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.05; r.outputColorSpace = THREE.SRGBColorSpace;
+const pm = new THREE.PMREMGenerator(r);
+const env = (f) => new RGBELoader().loadAsync(f).then((h) => { h.mapping = THREE.EquirectangularReflectionMapping; return pm.fromEquirectangular(h).texture; });
+const [studio, neon] = await Promise.all([env("../assets/hdr/studio_small_09_1k.hdr"), env("../assets/hdr/neon_photostudio_1k.hdr"), loadGlasses("../")]);
+const s = new THREE.Scene(); s.environment = studio;
+const key = new THREE.DirectionalLight(0xfff4ea, 2.4); key.position.set(1.8, 3.2, 3);
+const fill = new THREE.DirectionalLight(0xc9d8ff, 0.6); fill.position.set(-3, 0.5, 2.5);
+const rimL = new THREE.SpotLight(0xff2fb3, 40, 12, 0.6, 0.8); rimL.position.set(-3.2, 1.2, -1.8);
+const rimR = new THREE.SpotLight(0x19e6ff, 40, 12, 0.6, 0.8); rimR.position.set(3.2, -0.2, -1.8);
+s.add(key, fill, rimL, rimR, new THREE.HemisphereLight(0xffffff, 0x1a0d24, 0.35));
+const cam = new THREE.PerspectiveCamera(30, W / H, 0.1, 20); cam.position.set(0, 0.12, 2.6); cam.lookAt(0, 0, 0);
+const grab = (hex) => { r.setClearColor(hex, 1); r.render(s, cam); const c = document.createElement("canvas"); c.width = W; c.height = H; const g = c.getContext("2d"); g.drawImage(r.domElement, 0, 0); return g.getImageData(0, 0, W, H); };
+for (const n of NOCHES) {
+  const m = buildGlass(n.glass, { still: true }); m.rotation.y = 0.5;
+  m.traverse((o) => { if (o.material?.userData?.isLiquid) o.material.envMap = neon; });
+  s.add(m);
+  const black = grab(0x000000), white = grab(0xffffff), out = new ImageData(W, H);
+  for (let p = 0; p < black.data.length; p += 4) {
+    const d = (white.data[p] - black.data[p] + white.data[p + 1] - black.data[p + 1] + white.data[p + 2] - black.data[p + 2]) / 3;
+    const a = Math.max(0, Math.min(255, 255 - d)), k = a > 0 ? 255 / a : 0;
+    for (let ch = 0; ch < 3; ch++) out.data[p + ch] = Math.min(255, black.data[p + ch] * k);
+    out.data[p + 3] = a;
+  }
+  s.remove(m);
+  const c = document.createElement("canvas"); c.width = W; c.height = H; c.getContext("2d").putImageData(out, 0, 0);
+  const blob = await new Promise((res) => c.toBlob(res, "image/webp", 0.9));
+  await fetch(`../assets/img/copas/${n.id}.webp`, { method: "PUT", body: blob });
+  const img = new Image(); img.src = URL.createObjectURL(blob); img.style.height = "300px"; document.body.append(img);
+}
+window.__done = true;
+</script></body></html>

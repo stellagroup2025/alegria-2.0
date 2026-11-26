@@ -1,0 +1,4 @@
+# Herramientas internas (banco de pruebas de copas, auditoría, servidor local): no se publican
+tools
+.env*
+.gitignore

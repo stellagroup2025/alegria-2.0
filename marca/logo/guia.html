@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Alegría 2.0 · Guía de marca</title>
+<style>
+  @font-face { font-family: Unbounded; src: url(../../web/assets/fonts/unbounded-latin-37e641.woff2); font-weight: 200 900; }
+  :root { --night: #0a0610; --pink: #ff2fb3; --cyan: #19e6ff; --violet: #7b2cff; --paper: #f3f0ea; }
+  * { box-sizing: border-box; margin: 0; }
+  body { width: 1600px; background: var(--paper); color: var(--night); font: 15px/1.5 Unbounded, system-ui, sans-serif; }
+  section { padding: 56px 64px; }
+  h1 { font-size: 40px; font-weight: 800; letter-spacing: -0.02em; }
+  h2 { font-size: 13px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 20px; }
+  .lead { margin-top: 10px; max-width: 900px; color: #4b4552; }
+  .hero { background: var(--night); color: #fff; display: grid; grid-template-columns: 1fr 520px; gap: 48px; align-items: center; }
+  .hero .lead { color: #c9c2d3; }
+  .hero img { width: 460px; justify-self: center; }
+  .grid { display: grid; gap: 16px; }
+  .g4 { grid-template-columns: repeat(4, 1fr); } .g5 { grid-template-columns: repeat(5, 1fr); }
+  .tile { aspect-ratio: 1; border-radius: 18px; display: grid; place-items: center; padding: 28px; }
+  .tile img { width: 100%; height: 100%; object-fit: contain; }
+  .cap { font-size: 12px; margin-top: 8px; color: #4b4552; }
+  .sw { border-radius: 18px; height: 150px; padding: 18px; display: flex; flex-direction: column; justify-content: flex-end; font-size: 12px; font-weight: 600; }
+  .sizes { display: flex; align-items: flex-end; gap: 36px; }
+  .sizes div { text-align: center; font-size: 12px; color: #4b4552; }
+  ul { padding-left: 18px; } li { margin: 4px 0; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+</style>
+</head>
+<body>
+  <section class="hero">
+    <div>
+      <h2 style="color:var(--cyan)">Guía de marca · v1 · noviembre 2026</h2>
+      <h1>Alegría 2.0 · Disco Pub</h1>
+      <p class="lead">El sello: un micro de karaoke con dos maracas dentro de «ALEGRÍA 2.0 · DISCO PUB · MADRID». Cuenta en un vistazo lo que es el local: se canta, se baila música latina y se viene a celebrar. Funciona como parche, pegatina, pulsera, rótulo y foto de perfil.</p>
+    </div>
+    <img src="sello-color.svg" alt="">
+  </section>
+
+  <section>
+    <h2>Versiones del sello</h2>
+    <div class="grid g5">
+      <div><div class="tile" style="background:var(--night)"><img src="sello-color.svg" alt=""></div><p class="cap">Color · principal, sobre fondo oscuro</p></div>
+      <div><div class="tile" style="background:#fff"><img src="sello-color-claro.svg" alt=""></div><p class="cap">Color · sobre fondo claro</p></div>
+      <div><div class="tile" style="background:var(--violet)"><img src="sello-blanco.svg" alt=""></div><p class="cap">Blanco · una tinta, negativo</p></div>
+      <div><div class="tile" style="background:#fff;border:1px solid #ddd"><img src="sello-negro.svg" alt=""></div><p class="cap">Negro · una tinta, fax, sello de caucho</p></div>
+      <div><div class="tile" style="background:var(--night)"><img src="sello-rosa.svg" alt=""></div><p class="cap">Rosa · una tinta, neón</p></div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <h2>Símbolo e iconos</h2>
+    <div class="grid g5">
+      <div><div class="tile" style="background:var(--night)"><img src="simbolo-color.svg" alt=""></div><p class="cap">Símbolo color</p></div>
+      <div><div class="tile" style="background:var(--pink)"><img src="simbolo-blanco.svg" alt=""></div><p class="cap">Símbolo blanco</p></div>
+      <div><div class="tile" style="background:#fff;border:1px solid #ddd"><img src="simbolo-negro.svg" alt=""></div><p class="cap">Símbolo negro</p></div>
+      <div><div class="tile" style="background:transparent;padding:0"><img src="icono-app.svg" alt=""></div><p class="cap">Icono de app / perfil</p></div>
+      <div class="sizes" style="padding:20px 0">
+        <div><img src="favicon.svg" width="64" alt=""><br>64</div>
+        <div><img src="favicon.svg" width="32" alt=""><br>32</div>
+        <div><img src="favicon.svg" width="16" alt=""><br>16</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <h2>Colores</h2>
+    <div class="grid g4">
+      <div class="sw" style="background:var(--pink);color:var(--night)">Rosa neón<br>#FF2FB3 · RGB 255 47 179<br>Pantone 806 C (aprox.)</div>
+      <div class="sw" style="background:var(--cyan);color:var(--night)">Cian neón<br>#19E6FF · RGB 25 230 255<br>Pantone 3105 C (aprox.)</div>
+      <div class="sw" style="background:var(--night);color:#fff">Noche<br>#0A0610 · RGB 10 6 16<br>Pantone Black 6 C (aprox.)</div>
+      <div class="sw" style="background:var(--violet);color:#fff">Violeta (apoyo)<br>#7B2CFF · RGB 123 44 255<br>Pantone 2665 C (aprox.)</div>
+    </div>
+    <p class="cap" style="margin-top:12px">Los Pantone son aproximados: el rosa y el cian neón no existen en cuatricromía. Para imprimir, pedir prueba de color o usar tintas fluorescentes (801 C / 806 C).</p>
+  </section>
+
+  <section style="padding-top:0" class="two">
+    <div>
+      <h2>Uso</h2>
+      <ul>
+        <li>Margen libre alrededor del sello: la altura de la «A» de ALEGRÍA, como mínimo.</li>
+        <li>Tamaño mínimo del sello: 22 mm impreso y 96 px en pantalla. Por debajo, usar el símbolo.</li>
+        <li>Tamaño mínimo del símbolo: 8 mm y 16 px (favicon).</li>
+        <li>Sobre fotos, usar el sello blanco o el de color sobre una zona oscura y tranquila.</li>
+        <li>Tipografías: Shrikhand para títulos y rótulos; Unbounded para textos y botones.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>No hacer</h2>
+      <ul>
+        <li>No estirar, girar ni cambiar el orden de los textos del sello.</li>
+        <li>No cambiar los colores ni poner el sello cian sobre blanco (no se lee).</li>
+        <li>No añadir sombras, degradados ni contornos.</li>
+        <li>No separar el micro del texto fuera del uso como símbolo.</li>
+        <li>No usar el sello de color sobre fondos rosas o cian.</li>
+      </ul>
+    </div>
+  </section>
+</body>
+</html>

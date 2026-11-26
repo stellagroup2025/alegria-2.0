@@ -1,0 +1,9 @@
+# secretos y config local de Vercel
+.env*
+.vercel/
+# sistema
+.DS_Store
+__pycache__/
+*.pyc
+# copia de la web de referencia (yaas-energy.com): es de otra empresa, no se publica
+referencia-yaas/
