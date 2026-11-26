@@ -315,3 +315,4 @@
 .qr-admin-sub { margin: 4px 0 8px; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim); }
 .qr-admin-list { display: grid; gap: 8px; margin: 0 0 16px; padding: 0; list-style: none; font-size: 14px; overflow-wrap: anywhere; }
 .qr-admin-list a { color: var(--cyan); white-space: nowrap; }
+.qr-autofill { margin: -4px 0 0; }

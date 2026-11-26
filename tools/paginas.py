@@ -467,7 +467,7 @@ CLUB_NOMBRE = "Tarjeta de sellos" if SELLOS_ON else "Familia Alegría"
 CLUB_INTRO = ("la <b>tarjeta de sellos</b> (la pantalla a la que lleva el QR de las mesas), y solo si te das de alta" if SELLOS_ON
               else "el formulario <b>«Únete a la familia Alegría»</b> (la pantalla a la que lleva el QR de las mesas), y solo si lo envías")
 CLUB_DATOS = ("nombre, teléfono, y si nos los das, email y fecha de nacimiento. También guardamos tus visitas (la fecha de cada sello) y tus premios." if SELLOS_ON
-              else "nombre, teléfono (WhatsApp) y, si nos la das, tu fecha de nacimiento, junto con las casillas que marcaste y cuándo.")
+              else "nombre, teléfono (WhatsApp) y, si nos los das, email y fecha de nacimiento, junto con las casillas que marcaste y cuándo.")
 CLUB_FIN = ("gestionar tu tarjeta (sellos y premios) e identificarte si cambias de móvil." if SELLOS_ON
             else "tenerte en nuestra lista de clientes del local.")
 CLUB_BAJA = ("Puedes borrarla tú cuando quieras con «Borrar mi tarjeta y mis datos»: se elimina al momento." if SELLOS_ON
@@ -490,7 +490,7 @@ legal("privacidad", "Política de privacidad", "Privacidad",
         <h3 id="club">3.1 {CLUB_NOMBRE}</h3>
         <ul>
           <li><b>Datos:</b> {CLUB_DATOS}</li>
-          <li><b>Para qué:</b> {CLUB_FIN} Solo si marcas las casillas correspondientes: avisarte de fiestas y promociones por WhatsApp, y felicitarte por tu cumpleaños. Entrar en el canal de WhatsApp es aparte: lo haces tú en WhatsApp y puedes salir cuando quieras.</li>
+          <li><b>Para qué:</b> {CLUB_FIN} Solo si marcas las casillas correspondientes: avisarte de fiestas y promociones por WhatsApp o email, y felicitarte por tu cumpleaños. Entrar en el canal de WhatsApp es aparte: lo haces tú en WhatsApp y puedes salir cuando quieras.</li>
           <li><b>Base legal:</b> tu consentimiento (art. 6.1.a del RGPD), que puedes retirar en cualquier momento {CLUB_PREF}.</li>
           <li><b>Conservación:</b> mientras sigas con nosotros. Si en 2 años no hay ningún contacto, borramos tus datos. {CLUB_BAJA}</li>
           <li><b>Dónde se guardan:</b> en una base de datos de Supabase alojada en la Unión Europea (París), que actúa como encargado del tratamiento. No cedemos tus datos a nadie ni los usamos para otros negocios.</li>

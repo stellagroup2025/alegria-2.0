@@ -29,10 +29,12 @@
       <section class="qr-panel qr-signup" data-view="alta">
         <h1 class="qr-title">Únete a la familia</h1>
         <p class="qr-muted qr-join-lead">Déjanos tu nombre y entra en nuestro canal de WhatsApp: fiestas, Viejotecas y noches de DJ, antes que nadie.</p>
-        <form class="qr-form qr-join" novalidate>
-          <div class="field"><label for="nombre">¿Cómo te llamas? *</label><input id="nombre" name="nombre" type="text" placeholder="Tu nombre" autocomplete="given-name" maxlength="80"><p class="qr-hint" data-for="nombre"></p></div>
-          <div class="field"><label for="telefono">Tu WhatsApp *</label><input id="telefono" name="telefono" type="tel" placeholder="612 345 678" autocomplete="tel" inputmode="tel"><p class="qr-hint" data-for="telefono"></p></div>
-          <div class="field"><label for="fecha_nacimiento">🎂 Tu cumpleaños <span class="qr-dim">(opcional)</span></label><input id="fecha_nacimiento" name="fecha_nacimiento" type="date" max="2010-12-31" min="1920-01-01"><p class="qr-hint" data-for="fecha_nacimiento"></p></div>
+        <form class="qr-form qr-join" novalidate autocomplete="on">
+          <p class="qr-help qr-autofill">✨ Tu móvil puede rellenarlo por ti: toca un campo y elige tus datos guardados.</p>
+          <div class="field"><label for="nombre">¿Cómo te llamas? *</label><input id="nombre" name="name" type="text" placeholder="Nombre y apellido" autocomplete="name" autocapitalize="words" enterkeyhint="next" maxlength="80"><p class="qr-hint" data-for="nombre"></p></div>
+          <div class="field"><label for="telefono">Tu WhatsApp *</label><input id="telefono" name="tel" type="tel" placeholder="612 345 678" autocomplete="tel" inputmode="tel" enterkeyhint="next"><p class="qr-hint" data-for="telefono"></p></div>
+          <div class="field"><label for="email">Tu email <span class="qr-dim">(opcional)</span></label><input id="email" name="email" type="email" placeholder="tu@email.com" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" enterkeyhint="next"><p class="qr-hint" data-for="email"></p></div>
+          <div class="field"><label for="fecha_nacimiento">🎂 Tu cumpleaños <span class="qr-dim">(opcional)</span></label><input id="fecha_nacimiento" name="bday" type="date" autocomplete="bday" max="2010-12-31" min="1920-01-01"><p class="qr-hint" data-for="fecha_nacimiento"></p></div>
             <label class="qr-check is-required" for="aceptarPrivacidad">
               <input type="checkbox" id="aceptarPrivacidad" name="aceptarPrivacidad">
               <span class="qr-check-box" aria-hidden="true"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
@@ -41,7 +43,7 @@
             <label class="qr-check" for="aceptarPromos">
               <input type="checkbox" id="aceptarPromos" name="aceptarPromos">
               <span class="qr-check-box" aria-hidden="true"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
-              <span class="qr-check-text"><b>Quiero que me aviséis de fiestas y promociones</b><small>Por WhatsApp. Te das de baja cuando quieras.</small></span>
+              <span class="qr-check-text"><b>Quiero que me aviséis de fiestas y promociones</b><small>Por WhatsApp o email. Te das de baja cuando quieras.</small></span>
             </label>
             <label class="qr-check" for="aceptarCumple">
               <input type="checkbox" id="aceptarCumple" name="aceptarCumple">

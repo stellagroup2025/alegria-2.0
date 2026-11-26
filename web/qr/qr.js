@@ -420,11 +420,12 @@ if (view === "sellos") {
 // ============ 3b · únete: mini formulario → canal de WhatsApp ============
 if (view === "unete") {
   const CANAL = JSON.parse($("#canal").textContent);
-  const form = $(".qr-join"), campo = (n) => form.elements[n];
+  const form = $(".qr-join"), campo = (n) => $(`#${n}`, form) || form.elements[n];
   const enviar = $('[type="submit"]', form), errForm = $(".qr-form-error");
   const REGLAS = {
     nombre: (v) => (v.trim().length >= 2 ? "" : "Tu nombre debe tener al menos 2 letras"),
     telefono: (v) => (v.replace(/\D/g, "").length >= 9 ? "" : "El teléfono debe tener al menos 9 cifras"),
+    email: (v) => (!v.trim() || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? "" : "Revisa que tu email sea correcto"),
     fecha_nacimiento: (v) => {
       if (!v) return "";
       const d = new Date(v), edad = (Date.now() - d) / (365.25 * 864e5);
@@ -440,11 +441,11 @@ if (view === "unete") {
     return !err;
   }
   const listo = () => (enviar.disabled = !(campo("aceptarPrivacidad").checked && campo("nombre").value && campo("telefono").value));
-  ["nombre", "telefono", "fecha_nacimiento"].forEach((n) => campo(n).addEventListener("input", () => { if (campo(n).classList.contains("is-bad")) validar(n); listo(); }));
-  ["nombre", "telefono", "fecha_nacimiento"].forEach((n) => campo(n).addEventListener("blur", () => campo(n).value && validar(n)));
+  ["nombre", "telefono", "email", "fecha_nacimiento"].forEach((n) => ["input", "change"].forEach((ev) => campo(n).addEventListener(ev, () => { if (campo(n).classList.contains("is-bad")) validar(n); listo(); })));
+  ["nombre", "telefono", "email", "fecha_nacimiento"].forEach((n) => campo(n).addEventListener("blur", () => campo(n).value && validar(n)));
   const cumple = campo("aceptarCumple").closest(".qr-check");
   const verCumple = () => { cumple.hidden = !campo("fecha_nacimiento").value; if (cumple.hidden) campo("aceptarCumple").checked = false; };
-  campo("fecha_nacimiento").addEventListener("input", verCumple); verCumple();
+  ["input", "change"].forEach((ev) => campo("fecha_nacimiento").addEventListener(ev, verCumple)); verCumple();
   campo("aceptarPrivacidad").addEventListener("change", listo); listo();
 
   const hecho = () => {
@@ -456,7 +457,7 @@ if (view === "unete") {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     errForm.textContent = "";
-    if (!["nombre", "telefono", "fecha_nacimiento"].map((n) => validar(n)).every(Boolean)) { form.querySelector(".is-bad")?.focus(); return; }
+    if (!["nombre", "telefono", "email", "fecha_nacimiento"].map((n) => validar(n)).every(Boolean)) { form.querySelector(".is-bad")?.focus(); return; }
     if (!campo("aceptarPrivacidad").checked) { errForm.textContent = msg("privacidad"); return; }
     const txt = enviar.innerHTML;
     enviar.disabled = true; enviar.textContent = "Un momento…";
@@ -464,7 +465,7 @@ if (view === "unete") {
       p_negocio: SB.negocio,
       p_nombre: campo("nombre").value.trim(),
       p_telefono: campo("telefono").value,
-      p_email: null,
+      p_email: campo("email").value.trim() || null,
       p_fecha_nacimiento: campo("fecha_nacimiento").value || null,
       p_acepta_privacidad: true,
       p_acepta_promos: campo("aceptarPromos").checked,
