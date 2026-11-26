@@ -595,8 +595,15 @@ if (view === "barra") {
     const cols = [["nombre", "Nombre"], ["telefono", "Teléfono"], ["email", "Email"], ["fecha_nacimiento", "Nacimiento"],
       ...(SB.sellos ? [["sellos", "Sellos ahora"], ["visitas", "Visitas"], ["ultimo_sello_at", "Última visita"]] : []),
       ["acepta_promos", "Acepta avisos"], ["acepta_cumple", "Acepta felicitación"], ["alta", "Alta"], ["codigo", "Código"]].filter(([k]) => SB.sellos || k !== "codigo");
-    const cel = (v) => { const t = v === true ? "sí" : v === false ? "no" : v == null ? "" : String(v).replace(/T.*/, ""); return /[;"\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
-    const csv = "﻿" + [cols.map((c) => c[1]).join(";"), ...filas.map((f) => cols.map(([k]) => cel(f[k])).join(";"))].join("\r\n");
+    // CSV seguro para Excel: lo que escribe el cliente no puede convertirse en fórmula (=, +, -, @…)
+    const cel = (v, k) => {
+      let t = v === true ? "sí" : v === false ? "no" : v == null ? "" : String(v);
+      if (/_at$|^alta$/.test(k)) t = t.replace(/T.*/, "");
+      if (k === "telefono" && /^\+[0-9]+$/.test(t)) return `="${t}"`; // se ve +34…, sin perder el +
+      if (/^[=+\-@\t\r]/.test(t)) t = "'" + t;
+      return /[;"\n\r]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t;
+    };
+    const csv = "﻿" + [cols.map((c) => c[1]).join(";"), ...filas.map((f) => cols.map(([k]) => cel(f[k], k)).join(";"))].join("\r\n");
     const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" })), download: `clientes-${SB.negocio}-${new Date().toISOString().slice(0, 10)}.csv` });
     a.click();
     toast("Descargado", `${filas.length} cliente${filas.length !== 1 ? "s" : ""}`);

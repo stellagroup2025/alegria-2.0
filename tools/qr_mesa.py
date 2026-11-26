@@ -366,6 +366,6 @@ page("barra", f"{BARRA_T} · {NOMBRE}", f"Pantalla del personal de {NOMBRE}.", f
         </section>
       </div>
     </main>
-""", "barra", qrlib=True)
+""", "barra", qrlib=SELLOS)
 
 print("ok qr de mesa: index, unete, barra" + (", sellos" if SELLOS else "") + (", carta" if QR_CARTA else ""))
