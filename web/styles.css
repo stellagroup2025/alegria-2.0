@@ -363,3 +363,20 @@ button { font: inherit; color: inherit; }
 
 /* texto solo para buscadores y lectores de pantalla */
 .sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
+
+/* canal: ventajas + tarjeta de Instagram (invitación a etiquetarnos) */
+.canal-perks { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 10px; margin: 22px auto 0; padding: 0; list-style: none; }
+.canal-perks li { padding: 8px 14px; border-radius: 100px; border: 1px solid rgba(255, 255, 255, 0.18); background: rgba(255, 255, 255, 0.05); font-size: 14px; white-space: nowrap; }
+@media (max-width: 400px) { .canal-perks li { white-space: normal; font-size: 13px; } }
+.canal-card.is-ig { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; margin-top: 20px; padding: clamp(24px, 4vw, 40px) clamp(20px, 4vw, 48px); text-align: left; border-color: rgba(255, 47, 179, 0.55); box-shadow: 0 0 40px rgba(255, 47, 179, 0.16), inset 0 0 40px rgba(255, 47, 179, 0.06); background: linear-gradient(135deg, rgba(255, 47, 179, 0.14), rgba(255, 210, 63, 0.08)), rgba(10, 6, 16, 0.6); }
+.canal-card.is-ig .canal-icon { background: linear-gradient(135deg, var(--gold), var(--magenta) 55%, #7b2cff); box-shadow: 0 0 30px rgba(255, 47, 179, 0.6); }
+.canal-card.is-ig .canal-icon svg { stroke: #fff; }
+.canal-card.is-ig .canal-kicker { margin: 0; color: var(--magenta); text-shadow: 0 0 12px rgba(255, 47, 179, 0.6); }
+.canal-card.is-ig .canal-heading { margin: 6px 0 0; font-size: clamp(26px, 3.4vw, 38px); }
+.canal-card.is-ig .canal-lead { margin: 10px 0 0; max-width: 520px; font-size: 15px; }
+.canal-card.is-ig .canal-btn { margin-top: 0; background: #fff; box-shadow: 0 0 26px rgba(255, 47, 179, 0.5); white-space: nowrap; }
+.canal-card.is-ig .canal-btn:hover { box-shadow: 0 0 40px rgba(255, 47, 179, 0.8); }
+@media (max-width: 860px) {
+  .canal-card.is-ig { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 16px; }
+  .canal-card.is-ig .canal-lead { margin-inline: auto; }
+}

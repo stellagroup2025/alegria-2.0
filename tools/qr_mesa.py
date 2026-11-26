@@ -12,6 +12,8 @@ WEB = pathlib.Path(__file__).resolve().parent.parent / "web"
 QR = WEB / "qr"
 NOMBRE = "Alegría 2.0"
 REVIEW = "https://search.google.com/local/writereview?placeid=ChIJl7Wl5womQg0R2IrWNvPQIvo"
+INSTAGRAM = "https://www.instagram.com/laalegria_2.0/"
+IG_USER = "@laalegria_2.0"
 # Programa de sellos de la demo (propuesto, no confirmado con el cliente)
 PROGRAMA = {"nombre": "Tarjeta Alegría", "descripcion": "Un sello por cada visita.", "objetivo": 8,
             "premio": "Un cóctel de la casa", "instrucciones": "Enséñalo en la barra y te ponemos tu cóctel."}
@@ -53,6 +55,7 @@ ICON = {
     "buscar": '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
     "salir": '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/>',
     "usuarios": '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    "camara_ig": '<rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>',
     "descargar": '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>',
 }
 def icon(name, cls="ico"):
@@ -111,7 +114,7 @@ def via(clave, href, ico, titulo, texto, color, externo=False, first=False):
         </a>
 '''
 
-page("index", f"{NOMBRE} · Bienvenido", f"Únete a la familia {NOMBRE} y déjanos tu reseña.", f'''    <div class="qr-cover is-tall">{COVER}<div class="qr-veil"></div></div>
+page("index", f"{NOMBRE} · Bienvenido", f"Entra en la familia {NOMBRE} y déjanos tu reseña.", f'''    <div class="qr-cover is-tall">{COVER}<div class="qr-veil"></div></div>
     <main class="qr-main is-lifted">
       <header class="qr-brand">
         <span class="qr-seal">{SEAL}</span>
@@ -119,7 +122,8 @@ page("index", f"{NOMBRE} · Bienvenido", f"Únete a la familia {NOMBRE} y déjan
         <p class="qr-hello">¡Gracias por venir! ¿Qué te apetece hacer?</p>
       </header>
       <nav class="qr-vias" aria-label="Opciones">
-{via("carta", "carta.html", "carta", "Ver la carta", "Platos, precios y alérgenos, con fotos.", "var(--magenta)", first=True) if QR_CARTA else ""}{(via("sellos", "sellos.html", "sello", "Tarjeta de sellos", "Un sello en cada visita y, al completarla, invitamos nosotros.", "var(--cyan)", first=not QR_CARTA) + via("canal", CANAL, "whatsapp", "Canal de WhatsApp", "Fiestas, Viejotecas y noches de DJ: te avisamos antes que a nadie.", "var(--magenta)", externo=True) + via("resena", REVIEW, "estrella", "Déjanos tu reseña", "¿Te ha gustado? Cuéntalo en Google, nos ayuda muchísimo.", "var(--gold)", externo=True)) if SELLOS else (via("resena", REVIEW, "estrella", "Déjanos tu reseña", "¿Te ha gustado? Cuéntalo en Google: nos ayuda muchísimo.", "var(--gold)", externo=True, first=not QR_CARTA) + via("unete", "unete.html", "whatsapp", "Únete a la familia Alegría", "Fiestas, Viejotecas y sorpresas en nuestro canal de WhatsApp.", "var(--magenta)"))}      </nav>
+{via("carta", "carta.html", "carta", "Ver la carta", "Platos, precios y alérgenos, con fotos.", "var(--magenta)", first=True) if QR_CARTA else ""}{(via("sellos", "sellos.html", "sello", "Tarjeta de sellos", "Un sello en cada visita y, al completarla, invitamos nosotros.", "var(--cyan)", first=not QR_CARTA) + via("canal", CANAL, "whatsapp", "Canal de WhatsApp", "Fiestas, Viejotecas y noches de DJ: te avisamos antes que a nadie.", "var(--magenta)", externo=True) + via("resena", REVIEW, "estrella", "Déjanos tu reseña", "¿Te ha gustado? Cuéntalo en Google, nos ayuda muchísimo.", "var(--gold)", externo=True)) if SELLOS else (via("resena", REVIEW, "estrella", "Déjanos tu reseña", "¿Te ha gustado? Cuéntalo en Google: nos ayuda muchísimo.", "var(--gold)", externo=True, first=not QR_CARTA) + via("unete", "unete.html", "whatsapp", "Entra en la familia Alegría", "Fiestas y ofertas antes que nadie, en nuestro canal de WhatsApp.", "var(--magenta)"))}      </nav>
+      <a class="qr-ig-line" href="{INSTAGRAM}" target="_blank" rel="noopener noreferrer">{icon("camara_ig")}<span>¿Foto en el karaoke? Etiquétanos en <b>{IG_USER}</b></span><span class="sr-only"> (se abre en una pestaña nueva)</span></a>
     </main>
     <footer class="qr-foot"><a href="https://qronnect.es">Hecho con Qronnect</a></footer>
 ''', "inicio")
@@ -264,30 +268,41 @@ else: page("sellos", f"Sellos · {NOMBRE}", f"Tarjeta de sellos de {NOMBRE}: un 
 """, "sellos", qrlib=True)
 
 # ---------------- 3b · ÚNETE (mini formulario → canal de WhatsApp) ----------------
-page("unete", f"Únete · {NOMBRE}", f"Únete a la familia {NOMBRE}: déjanos tu nombre y entra en nuestro canal de WhatsApp.", f"""    <div class="qr-topbar">
+page("unete", f"Únete · {NOMBRE}", f"Entra en el canal de WhatsApp de {NOMBRE}: fiestas, Viejotecas y ofertas antes que nadie.", f"""    <div class="qr-topbar">
       <a class="qr-back is-flat" href="index.html" aria-label="Volver">{icon("volver")}</a>
       <span class="qr-seal is-tiny">{SEAL}</span>
       <span class="qr-topbar-name">{NOMBRE}</span>
     </div>
     <main class="qr-main qr-stamps">
       <section class="qr-panel qr-signup" data-view="alta">
-        <h1 class="qr-title">Únete a la familia</h1>
-        <p class="qr-muted qr-join-lead">Déjanos tu nombre y entra en nuestro canal de WhatsApp: fiestas, Viejotecas y noches de DJ, antes que nadie.</p>
+        <h1 class="qr-title">Que no te lo cuenten</h1>
+        <p class="qr-muted qr-join-lead">Las Viejotecas, las noches de DJ y las ofertas de la casa se anuncian primero en nuestro canal de WhatsApp. Entra en 20 segundos y entérate antes que nadie.</p>
+        <ul class="qr-perks">
+          <li><span aria-hidden="true">🎉</span><div><b>Cada fiesta, antes que nadie</b><small>Viejotecas, karaoke y noches de DJ, con día y hora.</small></div></li>
+          <li><span aria-hidden="true">🍹</span><div><b>Ofertas para los de la casa</b><small>Las promos del bar salen primero en el canal.</small></div></li>
+          <li><span aria-hidden="true">🎂</span><div><b>Tu cumple, celebrado</b><small>Déjanos la fecha y te felicitamos.</small></div></li>
+        </ul>
         <form class="qr-form qr-join" novalidate autocomplete="on">
           <p class="qr-help qr-autofill">✨ Tu móvil puede rellenarlo por ti: toca un campo y elige tus datos guardados.</p>
           <div class="field"><label for="nombre">¿Cómo te llamas? *</label><input id="nombre" name="name" type="text" placeholder="Nombre y apellido" autocomplete="name" autocapitalize="words" enterkeyhint="next" maxlength="80"><p class="qr-hint" data-for="nombre"></p></div>
           <div class="field"><label for="telefono">Tu WhatsApp *</label><input id="telefono" name="tel" type="tel" placeholder="612 345 678" autocomplete="tel" inputmode="tel" enterkeyhint="next"><p class="qr-hint" data-for="telefono"></p></div>
           <div class="field"><label for="email">Tu email <span class="qr-dim">(opcional)</span></label><input id="email" name="email" type="email" placeholder="tu@email.com" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" enterkeyhint="next"><p class="qr-hint" data-for="email"></p></div>
           <div class="field"><label for="fecha_nacimiento">🎂 Tu cumpleaños <span class="qr-dim">(opcional)</span></label><input id="fecha_nacimiento" name="bday" type="date" autocomplete="bday" max="2010-12-31" min="1920-01-01"><p class="qr-hint" data-for="fecha_nacimiento"></p></div>
-{checkbox("aceptarPrivacidad", f'He leído la <a href="../privacidad.html#club" target="_blank" rel="noopener">política de privacidad</a> y acepto que {NOMBRE} guarde mis datos. *', required=True)}{checkbox("aceptarPromos", '<b>Quiero que me aviséis de fiestas y promociones</b>', '<small>Por WhatsApp o email. Te das de baja cuando quieras.</small>')}{checkbox("aceptarCumple", '<b>Felicitadme por mi cumpleaños</b>', '<small>Solo si nos has dado la fecha.</small>')}          <button class="btn is-solid qr-wide-btn" type="submit" disabled>{icon("whatsapp")}Unirme al canal</button>
+{checkbox("aceptarPrivacidad", f'He leído la <a href="../privacidad.html#club" target="_blank" rel="noopener">política de privacidad</a> y acepto que {NOMBRE} guarde mis datos. *', required=True)}{checkbox("aceptarPromos", '<b>Quiero que me aviséis de fiestas y promociones</b>', '<small>Por WhatsApp o email. Te das de baja cuando quieras.</small>')}{checkbox("aceptarCumple", '<b>Felicitadme por mi cumpleaños</b>', '<small>Solo si nos has dado la fecha.</small>')}          <button class="btn is-solid qr-wide-btn" type="submit" disabled>{icon("whatsapp")}Entrar en el canal</button>
+          <p class="qr-nospam">Sin spam: solo planes y ofertas. Te sales cuando quieras.</p>
           <p class="qr-hint is-bad qr-form-error" role="alert"></p>
           <p class="qr-safe">{icon("escudo")}<span>Guardamos tus datos en servidores de la Unión Europea y no se los damos a nadie.</span></p>
         </form>
       </section>
       <section class="qr-panel qr-signup qr-joined" data-view="hecho" hidden>
-        <h1 class="qr-title">¡Ya eres de la familia!</h1>
-        <p class="qr-muted">Te estamos abriendo el canal de WhatsApp. Si no se abre solo, pulsa aquí:</p>
-        <a class="btn is-solid qr-wide-btn qr-canal-btn" href="{CANAL}" target="_blank" rel="noopener noreferrer">{icon("whatsapp")}Abrir el canal de WhatsApp</a>
+        <h1 class="qr-title">¡Bienvenido a la familia!</h1>
+        <p class="qr-muted">Te abrimos WhatsApp: pulsa «Seguir» en el canal y ya estás dentro. Si no se abre solo, toca aquí:</p>
+        <a class="btn is-solid qr-wide-btn qr-canal-btn" href="{CANAL}" target="_blank" rel="noopener noreferrer">{icon("whatsapp")}Abrir el canal</a>
+        <div class="qr-ig">
+          <h2>Y esta noche, ¿quién sale en la foto?</h2>
+          <p>Sube tus fotos y vídeos del karaoke y etiquétanos en <b>{IG_USER}</b>. Nos encanta ver cómo lo vivís, y las mejores acaban en nuestras stories.</p>
+          <a class="btn qr-wide-btn qr-ig-btn" href="{INSTAGRAM}" target="_blank" rel="noopener noreferrer">{icon("camara_ig")}Seguir en Instagram</a>
+        </div>
         <a class="qr-skip" href="index.html">Volver al inicio</a>
       </section>
     </main>

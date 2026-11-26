@@ -316,3 +316,18 @@
 .qr-admin-list { display: grid; gap: 8px; margin: 0 0 16px; padding: 0; list-style: none; font-size: 14px; overflow-wrap: anywhere; }
 .qr-admin-list a { color: var(--cyan); white-space: nowrap; }
 .qr-autofill { margin: -4px 0 0; }
+
+/* ===== únete: tono comercial + Instagram ===== */
+.qr-perks { display: grid; gap: 10px; margin: 0 0 20px; padding: 0; list-style: none; }
+.qr-perks li { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.04); }
+.qr-perks li > span { font-size: 22px; line-height: 1.2; }
+.qr-perks b { display: block; font-size: 14px; font-weight: 600; }
+.qr-perks small { display: block; margin-top: 2px; font-size: 12px; line-height: 1.45; color: var(--ink-dim); }
+.qr-nospam { margin-top: -4px; text-align: center; font-size: 12px; color: var(--ink-dim); }
+.qr-ig { margin-top: 10px; padding: 18px; border-radius: 20px; text-align: left; border: 1px solid rgba(255, 255, 255, 0.14); background: linear-gradient(135deg, rgba(255, 47, 179, 0.16), rgba(255, 210, 63, 0.10)); }
+.qr-ig h2 { font-family: var(--font-display); font-weight: 400; font-size: 21px; line-height: 1.2; }
+.qr-ig p { margin: 8px 0 14px; font-size: 13px; line-height: 1.55; color: var(--ink-soft); }
+.qr-ig b, .qr-ig-line b { white-space: nowrap; color: #fff; }
+.qr-ig-btn .ico, .qr-ig-line .ico { width: 18px; height: 18px; }
+.qr-ig-line { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 18px auto 0; padding: 10px 14px; font-size: 13px; line-height: 1.4; color: var(--ink-soft); text-decoration: none; text-align: center; }
+.qr-ig-line:hover span { text-decoration: underline; }
