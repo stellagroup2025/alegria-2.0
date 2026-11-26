@@ -6,7 +6,11 @@ Esta base sirve para **todos los negocios**. Cada negocio es una fila de `negoci
 
 ## Cómo funciona
 
-- **Alegría hoy (`SELLOS = False` en `tools/qr_mesa.py`):** el QR lleva a `qr/unete.html`, un formulario corto que llama a `alta_cliente` y después abre el canal de WhatsApp. `qr/barra.html` es solo para el dueño, con su clave: lista de clientes y descarga en CSV. La tarjeta de sellos está programada, pero apagada.
+- **Alegría hoy (`SELLOS = False` en `tools/qr_mesa.py`):**
+  - El QR lleva a `qr/unete.html`, un formulario corto que llama a `alta_cliente` y después abre el canal de WhatsApp.
+  - **Desde la web solo se puede apuntarse.** `barra.html` no se publica y el resto de funciones (personal, tarjeta, listado) tienen el `EXECUTE` retirado a `anon`.
+  - **Los datos son solo nuestros:** se consultan en el panel de Supabase (tabla `clientes`). El dueño del local no tiene acceso; él gestiona su canal de WhatsApp.
+  - Para reabrir los sellos en el futuro: `SELLOS = True` y `grant execute on function … to anon` de las funciones que se usen.
 
 - **Las tablas están cerradas.** Tienen RLS activado y no hay permisos para `anon`. La web solo puede llamar a las funciones RPC.
 - **El cliente** se da de alta desde `qr/sellos.html` con `alta_cliente`. Recibe un código y un token que se guardan en su móvil. Con ellos puede usar `mi_tarjeta`, `mis_preferencias` y `baja_cliente`. Del token solo se guarda su hash.

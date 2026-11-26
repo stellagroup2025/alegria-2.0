@@ -27,7 +27,7 @@ CANAL = re.search(r'export const CANAL_URL = "([^"]*)"', _d)[1] or "https://wa.m
 QR_CARTA = False  # el local no tiene carta (26-11-2026): la pantalla del QR no la enseña ni la genera
 # SELLOS = True activa la tarjeta de sellos (sellos.html) y la parte de barra de barra.html. Con False
 # (27-11-2026: Alegría aún no la quiere) el QR solo tiene reseñas y «únete» (mini formulario → canal de
-# WhatsApp), y barra.html queda como la pantalla del dueño para ver y descargar los clientes.
+# WhatsApp) y barra.html no se publica: los datos solo los vemos nosotros, en Supabase.
 SELLOS = False
 SUPABASE["sellos"] = SELLOS
 
@@ -302,7 +302,11 @@ BARRA_TXT = ("Solo para el personal. Escribe la clave del local una vez y este m
 OFF = "" if SELLOS else " hidden"
 OFF_DATA = "" if SELLOS else " data-off"
 LISTA = "" if SELLOS else '<h3 class="qr-admin-sub">Últimos apuntados</h3><ul class="qr-admin-list"></ul>'
-page("barra", f"{BARRA_T} · {NOMBRE}", f"Pantalla del personal de {NOMBRE}.", f"""    <div class="qr-topbar">
+# barra.html solo existe con la tarjeta de sellos (para el personal del local). Sin sellos, los datos de
+# los clientes son solo nuestros: se consultan en Supabase, nunca desde la web del negocio.
+if not SELLOS:
+    (QR / "barra.html").unlink(missing_ok=True)
+else: page("barra", f"{BARRA_T} · {NOMBRE}", f"Pantalla del personal de {NOMBRE}.", f"""    <div class="qr-topbar">
       <span class="qr-seal is-tiny">{SEAL}</span>
       <span class="qr-topbar-name">{NOMBRE} · {BARRA_T}</span>
       <button class="qr-back is-flat qr-logout" type="button" data-salir aria-label="Salir" hidden>{icon("salir")}</button>
@@ -368,4 +372,4 @@ page("barra", f"{BARRA_T} · {NOMBRE}", f"Pantalla del personal de {NOMBRE}.", f
     </main>
 """, "barra", qrlib=SELLOS)
 
-print("ok qr de mesa: index, unete, barra" + (", sellos" if SELLOS else "") + (", carta" if QR_CARTA else ""))
+print("ok qr de mesa: index, unete" + (", sellos, barra" if SELLOS else "") + (", carta" if QR_CARTA else ""))
