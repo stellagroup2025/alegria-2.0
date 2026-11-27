@@ -26,7 +26,7 @@ DEMO = bool(re.search(r"^DEMO = True", (ROOT / "tools/paginas.py").read_text(), 
 KARAOKE_H = re.search(r'export const KARAOKE = "([^"]*)"', (WEB / "js/data.js").read_text())[1].replace("\u00a0", " ")
 SITE_URL = "https://www.alegria20.es"  # dominio definitivo (pendiente de registrar)
 if DEMO:  # la demo vive en Vercel: así la vista previa al compartir el enlace (WhatsApp…) sí sale
-    SITE_URL = "https://alegria-2-0.vercel.app"
+    SITE_URL = "https://alegria20.es"
 CARTA_REAL = False                       # PENDIENTE: carta y precios reales del cliente
 OG_IMAGE = "assets/img/og-alegria.jpg"   # 1200×630
 TODAY = datetime.date.today().isoformat()
