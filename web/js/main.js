@@ -393,7 +393,7 @@ const ADVANTAGES = [
 // ======================================================================
 (() => {
   const list = $(".faq-list");
-  // En la portada solo las 4 más habituales; todas están en contacto.html (el botón de debajo lleva allí).
+  // En la portada solo las 4 más habituales; todas están en contacto (el botón de debajo lleva allí).
   const HOME = ["¿Ya estáis abiertos?", "¿A qué hora es el karaoke?", "¿Qué horario tenéis?", "¿Hay que reservar?"];
   FAQ.filter(([q]) => HOME.includes(q)).sort((x, y) => HOME.indexOf(x[0]) - HOME.indexOf(y[0])).forEach(([q, a], i) => {
     const item = document.createElement("div");

@@ -48,7 +48,7 @@ PAGES = {
     "privacidad": ("Privacidad", None),
     "cookies": ("Cookies", None),
 }
-path_of = lambda slug: "/" if slug == "index" else f"/{slug}.html"
+path_of = lambda slug: "/" if slug == "index" else f"/{slug}"  # direcciones limpias (cleanUrls en vercel.json)
 if re.search(r"^PAGINA_CARTA = True", (ROOT / "tools/paginas.py").read_text(), re.M):
     PAGES["carta"] = ("Carta", "0.7" if CARTA_REAL else None)  # con la carta de ejemplo no se indexa
 url = lambda path: SITE_URL + path
@@ -115,13 +115,13 @@ BAR = {
     "sameAs": [INSTAGRAM, MAPS],
 }
 if CARTA_REAL:
-    BAR["hasMenu"] = url("/carta.html")
+    BAR["hasMenu"] = url("/carta")
 
 WEBSITE = {"@type": "WebSite", "@id": WEB_ID, "url": url("/"), "name": "Alegría 2.0 · Disco pub latino en Vallecas", "inLanguage": "es-ES", "publisher": {"@id": BAR_ID}}
 
 FAQ_LD = {
     "@type": "FAQPage",
-    "@id": url("/contacto.html#preguntas"),
+    "@id": url("/contacto#preguntas"),
     "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in FAQ],
 }
 

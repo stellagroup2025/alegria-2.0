@@ -16,6 +16,18 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         super().end_headers()
 
+    # Direcciones limpias, igual que Vercel con cleanUrls: /celebraciones sirve celebraciones.html
+    # y /celebraciones.html redirige (308) a /celebraciones.
+    def do_GET(self):
+        path, _, query = self.path.partition("?")
+        if path.endswith(".html"):
+            clean = path[:-5]
+            clean = clean[:-5] if clean.endswith("index") else clean
+            self.send_response(308); self.send_header("Location", (clean or "/") + ("?" + query if query else "")); self.end_headers(); return
+        if path and not path.endswith("/") and "." not in path.rsplit("/", 1)[-1] and (ROOT / (path.lstrip("/") + ".html")).is_file():
+            self.path = path + ".html" + ("?" + query if query else "")
+        return super().do_GET()
+
     # Solo en local: las herramientas de tools/ guardan aquí sus renders (PUT /assets/img/...).
     def do_PUT(self):
         target = (ROOT / self.path.lstrip("/")).resolve()

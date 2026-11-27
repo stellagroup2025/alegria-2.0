@@ -23,7 +23,7 @@ FONTS_OLD = '''  <link rel="preconnect" href="https://fonts.googleapis.com">
 FONTS_NEW = '''  <link rel="preload" href="assets/fonts/shrikhand-latin-486ff6.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/fonts/fonts.css">'''
 WEB = pathlib.Path(__file__).resolve().parent.parent / "web"
-NAV = [("experiencias.html", "Experiencias")] + ([("carta.html", "Carta")] if PAGINA_CARTA else []) + [("ambiente.html", "Ambiente"), ("celebraciones.html", "Celebraciones")]
+NAV = [("experiencias", "Experiencias")] + ([("carta", "Carta")] if PAGINA_CARTA else []) + [("ambiente", "Ambiente"), ("celebraciones", "Celebraciones")]
 GRAD = '<div class="neon-gradient" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>'
 
 def header(brand=True):
@@ -31,7 +31,7 @@ def header(brand=True):
     left = '<a class="nav-seal" href="./" aria-label="Alegría 2.0, inicio"><img src="assets/icons/sello.svg" width="1588" height="1610" alt=""></a>\n        ' + \
         '<a class="hero-pill is-home" href="./">Inicio</a>\n        ' + \
         "\n        ".join(f'<a class="hero-pill" href="{h}">{t}</a>' for h, t in NAV)
-    menu = "\n    ".join(f'<a href="{h}">{t}</a>' for h, t in [("./", "Inicio")] + NAV + [("contacto.html", "Contacto")])
+    menu = "\n    ".join(f'<a href="{h}">{t}</a>' for h, t in [("./", "Inicio")] + NAV + [("contacto", "Contacto")])
     return f'''  <header class="site-header">
     <nav class="hero-nav" aria-label="Principal">
       <div class="hero-nav-left">
@@ -39,7 +39,7 @@ def header(brand=True):
       </div>
       <div class="hero-nav-right-group">
         <button class="hero-pill menu-toggle" type="button" aria-expanded="false" aria-controls="menu"><i aria-hidden="true"></i><span>Menú</span></button>
-        <a class="hero-pill hero-nav-right" href="contacto.html">Contacto</a>
+        <a class="hero-pill hero-nav-right" href="contacto">Contacto</a>
       </div>
     </nav>
   </header>
@@ -61,17 +61,17 @@ FOOTER = f'''  <footer class="site-footer">
     <div class="footer-logo" aria-hidden="true">Alegría</div>
     <nav class="footer-nav" aria-label="Pie">
       <a class="hero-pill" href="./">Inicio</a>
-      <a class="hero-pill" href="experiencias.html">Experiencias</a>
-{'      <a class="hero-pill" href="carta.html">Carta</a>' + chr(10) if PAGINA_CARTA else ''}      <a class="hero-pill" href="ambiente.html">Ambiente</a>
-      <a class="hero-pill" href="celebraciones.html">Celebraciones</a>
-      <a class="hero-pill" href="contacto.html">Contacto</a>
+      <a class="hero-pill" href="experiencias">Experiencias</a>
+{'      <a class="hero-pill" href="carta">Carta</a>' + chr(10) if PAGINA_CARTA else ''}      <a class="hero-pill" href="ambiente">Ambiente</a>
+      <a class="hero-pill" href="celebraciones">Celebraciones</a>
+      <a class="hero-pill" href="contacto">Contacto</a>
       <a class="hero-pill" data-href="canal" target="_blank" rel="noopener">Canal de WhatsApp</a>
       <a class="hero-pill" data-href="instagram" target="_blank" rel="noopener">Instagram</a>
     </nav>
     <div class="footer-legal">
       <p>Alegría 2.0 · C. del Puerto de Pajares, 3, Puente de Vallecas, 28053 Madrid · 625 92 44 29</p>
       <p>Solo mayores de 18 años. Bebe con responsabilidad.</p>
-      <p>© 2026 Alegría 2.0 · <a href="aviso-legal.html">Aviso legal</a> · <a href="privacidad.html">Privacidad</a> · <a href="cookies.html">Cookies</a></p>
+      <p>© 2026 Alegría 2.0 · <a href="aviso-legal">Aviso legal</a> · <a href="privacidad">Privacidad</a> · <a href="cookies">Cookies</a></p>
       <p class="footer-credit">Diseñado por <span class="credit">Stella Studio</span></p>
     </div>
   </footer>
@@ -87,7 +87,7 @@ def cta(title, left="karaoke", right="dj"):
             <div class="contact-actions">
               <a class="contact-pill is-solid" data-href="whatsapp" target="_blank" rel="noopener">WhatsApp <span class="contact-pill-arrow" aria-hidden="true">→</span></a>
               <a class="contact-pill" data-href="tel">Llamar</a>
-              <a class="contact-pill" href="contacto.html#mapa">Cómo llegar <span class="contact-pill-arrow" aria-hidden="true">→</span></a>
+              <a class="contact-pill" href="contacto#mapa">Cómo llegar <span class="contact-pill-arrow" aria-hidden="true">→</span></a>
             </div>
             <p class="contact-meta"><span class="nw">C. del Puerto de Pajares, 3</span> · <span class="nw">Puente de Vallecas</span> · <span class="nw">28053 Madrid</span><br><span class="nw">Martes a jueves 20:00–05:00</span> · <span class="nw">Viernes a domingo 20:00–05:30</span> · <span class="nw">Lunes cerrado</span><br>Karaoke de martes a domingo, <span class="nw">de 20:00 a 23:00</span></p>
           </div>
@@ -361,7 +361,7 @@ page("celebraciones", "Celebraciones · Cumpleaños y grupos | Alegría 2.0",
           <div class="field"><label for="f-hora">Hora aproximada</label><select id="f-hora" name="hora"><option>20:00 – 22:00</option><option selected>22:00 – 00:00</option><option>Más tarde</option><option>Aún no lo sé</option></select></div>
           <div class="field is-wide"><label for="f-email">Tu email (opcional)</label><input id="f-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="tu@email.com"></div>
           <div class="field is-wide"><label for="f-mensaje">Algo más (opcional)</label><textarea id="f-mensaje" name="mensaje" maxlength="1000" placeholder="Si traéis tarta, canciones que no pueden faltar, alguna sorpresa…"></textarea></div>
-          <label class="form-check is-wide"><input type="checkbox" name="privacidad" required><span>He leído la <a href="privacidad.html#reservas">política de privacidad</a> y acepto que Alegría 2.0 guarde mi petición para gestionarla.</span></label>
+          <label class="form-check is-wide"><input type="checkbox" name="privacidad" required><span>He leído la <a href="privacidad#reservas">política de privacidad</a> y acepto que Alegría 2.0 guarde mi petición para gestionarla.</span></label>
           <label class="form-check is-wide"><input type="checkbox" name="promos"><span><b>Avisadme de fiestas y promociones</b> por WhatsApp o email. Te das de baja cuando quieras.</span></label>
           <p class="form-error is-wide" role="alert"></p>
           <div class="form-actions">
@@ -386,7 +386,7 @@ page("contacto", "Contacto · Horario y cómo llegar | Alegría 2.0",
             <span class="map-pin" aria-hidden="true"></span>
             <p><b>C. del Puerto de Pajares, 3</b><br>Puente de Vallecas · Madrid</p>
             <button class="btn is-solid" type="button">Ver el mapa aquí</button>
-            <p class="map-note">El mapa lo sirve Google y puede usar sus cookies. <a href="cookies.html">Más info</a></p>
+            <p class="map-note">El mapa lo sirve Google y puede usar sus cookies. <a href="cookies">Más info</a></p>
           </div>
         </div>
         <div class="card card-hours" style="--c:var(--green)" data-reveal>
@@ -434,7 +434,7 @@ def legal(slug, title, h1, desc, body):
     <section class="block">
       <div class="block-inner legal">
 {body}
-        <nav class="legal-nav" aria-label="Textos legales"><a class="btn" href="aviso-legal.html">Aviso legal</a><a class="btn" href="privacidad.html">Privacidad</a><a class="btn" href="cookies.html">Cookies</a></nav>
+        <nav class="legal-nav" aria-label="Textos legales"><a class="btn" href="aviso-legal">Aviso legal</a><a class="btn" href="privacidad">Privacidad</a><a class="btn" href="cookies">Cookies</a></nav>
       </div>
     </section>
 ''')
@@ -480,7 +480,7 @@ CLUB_BAJA = ("Puedes borrarla tú cuando quieras con «Borrar mi tarjeta y mis d
              else "Puedes pedir que te borremos cuando quieras escribiéndonos por WhatsApp.")
 CLUB_PREF = "desde «Mis datos y avisos» en tu tarjeta o escribiéndonos" if SELLOS_ON else "escribiéndonos por WhatsApp"
 CLUB_MOVIL = ("          <li><b>En tu móvil:</b> el navegador guarda un código de tu tarjeta para abrirla sin volver a registrarte. No es una cookie de seguimiento y lo puedes borrar desde tu navegador.</li>\n" if SELLOS_ON else "")
-COOKIES_CLUB = ('\n        <p>Si te das de alta en la <a href="privacidad.html#club">tarjeta de sellos</a>, tu navegador guarda el código de tu tarjeta (almacenamiento local, no una cookie) para abrirla sin volver a registrarte. Es imprescindible para el servicio que has pedido, no sirve para seguirte y se borra si borras los datos del navegador o tu tarjeta.</p>' if SELLOS_ON
+COOKIES_CLUB = ('\n        <p>Si te das de alta en la <a href="privacidad#club">tarjeta de sellos</a>, tu navegador guarda el código de tu tarjeta (almacenamiento local, no una cookie) para abrirla sin volver a registrarte. Es imprescindible para el servicio que has pedido, no sirve para seguirte y se borra si borras los datos del navegador o tu tarjeta.</p>' if SELLOS_ON
                 else '\n        <p>Si rellenas el formulario del QR o el de reserva, tu navegador recuerda tu nombre, teléfono y, si los diste, email y cumpleaños (almacenamiento local en tu propio móvil, no una cookie), para que la próxima vez te salgan ya puestos y no tengas que escribirlos de nuevo. También recuerda que ya te uniste. No nos llega nada por esto, no sirve para seguirte y se borra si borras los datos del navegador.</p>')
 legal("privacidad", "Política de privacidad", "Privacidad",
       "Política de privacidad de Alegría 2.0: qué datos tratamos, para qué, durante cuánto tiempo y cómo ejercer tus derechos.", f'''
@@ -491,7 +491,7 @@ legal("privacidad", "Política de privacidad", "Privacidad",
           <li><b>Contacto:</b> {EMAIL} · 625 92 44 29</li>
         </ul>
         <h2>2. Qué datos recoge esta web</h2>
-        <p>No hay analítica ni publicidad. Solo guardamos datos en dos sitios, y solo si los envías: {CLUB_INTRO.replace(", y solo si lo envías", "").replace(", y solo si te das de alta", "")}, y el formulario de reserva de la página <a href="celebraciones.html">Celebraciones</a>.</p>
+        <p>No hay analítica ni publicidad. Solo guardamos datos en dos sitios, y solo si los envías: {CLUB_INTRO.replace(", y solo si lo envías", "").replace(", y solo si te das de alta", "")}, y el formulario de reserva de la página <a href="celebraciones">Celebraciones</a>.</p>
         <h2>3. Qué datos tratamos y para qué</h2>
         <h3 id="club">3.1 {CLUB_NOMBRE}</h3>
         <ul>
@@ -502,7 +502,7 @@ legal("privacidad", "Política de privacidad", "Privacidad",
           <li><b>Dónde se guardan:</b> en una base de datos de Supabase alojada en la Unión Europea (París), que actúa como encargado del tratamiento. No cedemos tus datos a nadie ni los usamos para otros negocios.</li>
 {CLUB_MOVIL}        </ul>
         <h3 id="reservas">3.2 Reservas y consultas</h3>
-        <p>Si nos pides sitio desde el formulario de <a href="celebraciones.html">Celebraciones</a>, nos escribes por WhatsApp o nos llamas, tratamos los datos que nos des (nombre, teléfono, email si nos lo das, tipo de celebración, día, hora aproximada, número de personas y lo que nos cuentes) con una única finalidad: <b>gestionar tu reserva o responder a tu consulta</b>.</p>
+        <p>Si nos pides sitio desde el formulario de <a href="celebraciones">Celebraciones</a>, nos escribes por WhatsApp o nos llamas, tratamos los datos que nos des (nombre, teléfono, email si nos lo das, tipo de celebración, día, hora aproximada, número de personas y lo que nos cuentes) con una única finalidad: <b>gestionar tu reserva o responder a tu consulta</b>.</p>
         <ul>
           <li><b>Formulario de la web:</b> al enviarlo guardamos una copia de tu petición en nuestra base de datos (Supabase, alojada en la Unión Europea) y se abre WhatsApp con el mensaje listo para que nos lo mandes. La copia sirve para que ninguna petición se pierda. Si además marcas «Avisadme de fiestas y promociones», entras en nuestra lista de clientes (apartado 3.1) con ese consentimiento; si ya estabas, solo completamos los datos que faltaran.</li>
           <li><b>Base legal:</b> la aplicación de medidas precontractuales a petición tuya (art. 6.1.b del RGPD) y, para lo demás, tu consentimiento al escribirnos (art. 6.1.a).</li>
@@ -528,7 +528,7 @@ legal("cookies", "Política de cookies", "Cookies",
         <h2>2. Cookies de esta web</h2>
         <p><b>Esta web no usa cookies propias</b>, ni de analítica, ni de publicidad, ni de redes sociales. Por eso no te mostramos un aviso de cookies al entrar.</p>{COOKIES_CLUB}
         <h2>3. Cookies de terceros</h2>
-        <p>Solo hay un caso: el mapa de Google de la página de <a href="contacto.html">Contacto</a>. No se carga hasta que pulsas «Ver el mapa aquí». Si lo haces, Google puede instalar sus propias cookies (por ejemplo, para recordar preferencias o medir el uso de Maps). Puedes consultar cuáles en la <a href="https://policies.google.com/technologies/cookies?hl=es" target="_blank" rel="noopener">política de cookies de Google</a>.</p>
+        <p>Solo hay un caso: el mapa de Google de la página de <a href="contacto">Contacto</a>. No se carga hasta que pulsas «Ver el mapa aquí». Si lo haces, Google puede instalar sus propias cookies (por ejemplo, para recordar preferencias o medir el uso de Maps). Puedes consultar cuáles en la <a href="https://policies.google.com/technologies/cookies?hl=es" target="_blank" rel="noopener">política de cookies de Google</a>.</p>
         <p>Si prefieres no cargarlo, puedes abrir la dirección directamente en la app de Google Maps con el botón «Cómo llegar».</p>
         <h2>4. Cómo borrarlas o bloquearlas</h2>
         <p>Puedes borrar o bloquear las cookies desde la configuración de tu navegador (Chrome, Safari, Firefox o Edge, en el apartado de privacidad).</p>
@@ -575,8 +575,8 @@ if "assets/icons/favicon" not in idx:
 if "pages.css" not in idx:
     idx = idx.replace('<link rel="stylesheet" href="styles.css">', '<link rel="stylesheet" href="styles.css">\n  <link rel="stylesheet" href="pages.css">')
 if not PAGINA_CARTA:
-    idx = idx.replace('<a class="section-link" href="carta.html">Ver la carta <span aria-hidden="true">→</span></a>',
-                      '<a class="section-link" href="contacto.html">Horario y cómo llegar <span aria-hidden="true">→</span></a>')
+    idx = idx.replace('<a class="section-link" href="carta">Ver la carta <span aria-hidden="true">→</span></a>',
+                      '<a class="section-link" href="contacto">Horario y cómo llegar <span aria-hidden="true">→</span></a>')
     (WEB / "carta.html").unlink(missing_ok=True)
 (WEB / "index.html").write_text(idx)
 print("ok")

@@ -78,7 +78,7 @@ if (view === "inicio") {
   // con la tarjeta ya hecha en este móvil va directo a ella; si no, a apuntarse
   const yo = store.get("cliente");
   const a = $('[data-via="sellos"]');
-  if (a) a.href = yo?.codigo ? "sellos.html#tarjeta" : "sellos.html#alta";
+  if (a) a.href = yo?.codigo ? "sellos#tarjeta" : "sellos#alta";
 }
 
 // ============ 2 · la carta ============
@@ -217,7 +217,7 @@ if (view === "sellos") {
   const CLI = "cliente";
   let yo = store.get(CLI), tarjeta = null, anterior = null;
 
-  // enlace de recuperación que genera la barra: sellos.html#c=CODIGO&t=TOKEN
+  // enlace de recuperación que genera la barra: sellos#c=CODIGO&t=TOKEN
   const h = new URLSearchParams(location.hash.slice(1));
   if (h.get("c") && h.get("t")) { yo = { codigo: h.get("c").toUpperCase(), token: h.get("t") }; store.set(yo, CLI); }
 
@@ -336,7 +336,7 @@ if (view === "sellos") {
       : `${faltan === 1 ? "¡Solo te falta 1 sello!" : `Te faltan ${faltan} sellos.`} Último sello: ${hace(t.ultimo_sello_at)}.`;
     $(".qr-coupon").hidden = !cupon;
     if (cupon) {
-      $(".qr-coupon-qr").innerHTML = qrSvg(`${QR_BASE}barra.html#u=${cupon.codigo}`, "QR del premio");
+      $(".qr-coupon-qr").innerHTML = qrSvg(`${QR_BASE}barra#u=${cupon.codigo}`, "QR del premio");
       $(".qr-code").textContent = cupon.codigo;
       const dias = Math.max(0, Math.ceil((new Date(cupon.caduca_at) - Date.now()) / 864e5));
       const exp = $(".qr-expire");
@@ -345,7 +345,7 @@ if (view === "sellos") {
     }
     $(".qr-pass-client").textContent = t.nombre;
     $(".qr-mi-codigo").textContent = t.codigo;
-    if (!$(".qr-pass-code svg")) $(".qr-pass-code").innerHTML = qrSvg(`${QR_BASE}barra.html#c=${t.codigo}`, "Tu código QR de cliente");
+    if (!$(".qr-pass-code svg")) $(".qr-pass-code").innerHTML = qrSvg(`${QR_BASE}barra#c=${t.codigo}`, "Tu código QR de cliente");
     if (antes !== undefined && t.sellos > antes) {
       const c = $(".qr-counter");
       c.classList.remove("is-bump"); void c.offsetWidth; c.classList.add("is-bump");
@@ -578,7 +578,7 @@ if (view === "barra") {
     const r = await rpc("personal_recuperar", { p_negocio: SB.negocio, p_clave: yo.clave, p_codigo: actual.codigo });
     if (r.error) { toast("Error", msg(r.error)); return; }
     const box = $(".qr-recover");
-    $(".qr-pass-code", box).innerHTML = qrSvg(`${QR_BASE}sellos.html#c=${r.codigo}&t=${r.token}`, "QR para recuperar la tarjeta");
+    $(".qr-pass-code", box).innerHTML = qrSvg(`${QR_BASE}sellos#c=${r.codigo}&t=${r.token}`, "QR para recuperar la tarjeta");
     box.hidden = false;
   });
 
@@ -617,7 +617,7 @@ if (view === "barra") {
     toast("Descargado", `${filas.length} cliente${filas.length !== 1 ? "s" : ""}`);
   }));
 
-  // al escanear el QR del cliente (barra.html#c=…) o del premio (#u=…) se abre aquí directamente
+  // al escanear el QR del cliente (barra#c=…) o del premio (#u=…) se abre aquí directamente
   async function desdeEnlace() {
     const h = new URLSearchParams(location.hash.slice(1)), q = h.get("c") || h.get("u");
     if (q && yo) { $("#q").value = q; await buscar(q); history.replaceState(null, "", location.pathname); }
