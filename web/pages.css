@@ -270,3 +270,11 @@
 
 /* «Inicio» visible en móvil: en pantallas muy estrechas Contacto queda dentro del menú */
 @media (max-width: 369px) { .hero-nav-right-group .hero-nav-right { display: none; } }
+
+/* reserva: casilla de privacidad y error */
+.form-check { grid-column: 1 / -1; display: flex; align-items: flex-start; gap: 12px; font-size: 13px; line-height: 1.55; color: var(--ink-soft); cursor: pointer; }
+.form-check input { flex-shrink: 0; width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--magenta); }
+.form-check a { color: var(--cyan); }
+.form-error { grid-column: 1 / -1; font-size: 13px; color: #ff9aac; }
+.form-error:empty { display: none; }
+.form-check b { color: #fff; font-weight: 600; }

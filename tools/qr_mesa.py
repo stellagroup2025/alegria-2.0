@@ -132,7 +132,7 @@ page("index", f"{NOMBRE} · Bienvenido", f"Entra en la familia {NOMBRE} y déjan
 if not QR_CARTA:
     (QR / "carta.html").unlink(missing_ok=True)
 else: page("carta", f"Carta · {NOMBRE}", f"La carta de {NOMBRE}: cócteles, cubos, copas, chupitos y sin alcohol, con sus alérgenos.", f'''    <div class="qr-cover is-short">{COVER}<div class="qr-veil"></div>
-      <a class="qr-back" href="index.html" aria-label="Volver">{icon("volver")}</a>
+      <a class="qr-back" href="./" aria-label="Volver">{icon("volver")}</a>
       <div class="qr-cover-title">
         <span class="qr-seal is-small">{SEAL}</span>
         <div><p class="qr-cover-kicker">Nuestra carta</p><h1 class="qr-cover-name">{NOMBRE}</h1></div>
@@ -174,7 +174,7 @@ SLOT_TPL = {"normal": slot(0, 2), "ultima": slot(1, 2)}
 if not SELLOS:
     (QR / "sellos.html").unlink(missing_ok=True)
 else: page("sellos", f"Sellos · {NOMBRE}", f"Tarjeta de sellos de {NOMBRE}: un sello en cada visita.", f"""    <div class="qr-topbar">
-      <a class="qr-back is-flat" href="index.html" aria-label="Volver">{icon("volver")}</a>
+      <a class="qr-back is-flat" href="./" aria-label="Volver">{icon("volver")}</a>
       <span class="qr-seal is-tiny">{SEAL}</span>
       <span class="qr-topbar-name">{NOMBRE}</span>
     </div>
@@ -269,7 +269,7 @@ else: page("sellos", f"Sellos · {NOMBRE}", f"Tarjeta de sellos de {NOMBRE}: un 
 
 # ---------------- 3b · ÚNETE (mini formulario → canal de WhatsApp) ----------------
 page("unete", f"Únete · {NOMBRE}", f"Entra en el canal de WhatsApp de {NOMBRE}: fiestas, Viejotecas y ofertas antes que nadie.", f"""    <div class="qr-topbar">
-      <a class="qr-back is-flat" href="index.html" aria-label="Volver">{icon("volver")}</a>
+      <a class="qr-back is-flat" href="./" aria-label="Volver">{icon("volver")}</a>
       <span class="qr-seal is-tiny">{SEAL}</span>
       <span class="qr-topbar-name">{NOMBRE}</span>
     </div>
@@ -303,7 +303,7 @@ page("unete", f"Únete · {NOMBRE}", f"Entra en el canal de WhatsApp de {NOMBRE}
           <p>Sube tus fotos y vídeos del karaoke y etiquétanos en <b>{IG_USER}</b>. Nos encanta ver cómo lo vivís, y las mejores acaban en nuestras stories.</p>
           <a class="btn qr-wide-btn qr-ig-btn" href="{INSTAGRAM}" target="_blank" rel="noopener noreferrer">{icon("camara_ig")}Seguir en Instagram</a>
         </div>
-        <a class="qr-skip" href="index.html">Volver al inicio</a>
+        <a class="qr-skip" href="./">Volver al inicio</a>
       </section>
     </main>
     <script type="application/json" id="canal">{json.dumps(CANAL)}</script>

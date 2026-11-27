@@ -4,7 +4,7 @@ import { WHATSAPP, CANAL, TEL, MAPS, INSTAGRAM } from "./data.js";
 const LINKS = { whatsapp: WHATSAPP, canal: CANAL, tel: TEL, maps: MAPS, instagram: INSTAGRAM };
 document.querySelectorAll("[data-href]").forEach((a) => { if (LINKS[a.dataset.href]) a.href = LINKS[a.dataset.href]; });
 
-const here = location.pathname.split("/").pop() || "index.html";
+const here = location.pathname.split("/").pop().replace(/^index\.html$/, "") || "./";
 document.querySelectorAll(".hero-nav a, .menu-overlay a, .footer-nav a").forEach((a) => {
   if (a.getAttribute("href") === here) a.setAttribute("aria-current", "page");
 });

@@ -448,6 +448,11 @@ if (view === "unete") {
   ["input", "change"].forEach((ev) => campo("fecha_nacimiento").addEventListener(ev, verCumple)); verCumple();
   campo("aceptarPrivacidad").addEventListener("change", listo); listo();
 
+  // si ya nos dejó sus datos en la web (reserva) o aquí, salen puestos: solo completa lo que falte
+  const mis = store.get("mis_datos");
+  if (mis) [["nombre", mis.nombre], ["telefono", mis.telefono], ["email", mis.email], ["fecha_nacimiento", mis.fecha_nacimiento]]
+    .forEach(([n, v]) => { if (v && !campo(n).value) campo(n).value = v; });
+  verCumple(); listo();
   const hecho = () => {
     $('[data-view="alta"]').hidden = true; $('[data-view="hecho"]').hidden = false;
     scrollTo(0, 0);
@@ -475,6 +480,9 @@ if (view === "unete") {
     // si ya estaba apuntado con ese teléfono, también le mandamos al canal
     if (r.error && r.error !== "ya_registrado") { errForm.textContent = msg(r.error); return; }
     store.set({ at: Date.now() }, "unido");
+    store.set({ ...(mis || {}), nombre: campo("nombre").value.trim(), telefono: campo("telefono").value,
+      ...(campo("email").value.trim() ? { email: campo("email").value.trim() } : {}),
+      ...(campo("fecha_nacimiento").value ? { fecha_nacimiento: campo("fecha_nacimiento").value } : {}) }, "mis_datos");
     hecho();
     setTimeout(() => { location.href = CANAL; }, 900);
   });

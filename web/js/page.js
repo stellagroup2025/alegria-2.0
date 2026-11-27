@@ -1,7 +1,7 @@
 // Páginas interiores: scroll suave, rótulo que se enciende, revelados al hacer scroll y lo propio
 // de cada página (según <body data-page>). La portada usa main.js.
 import "./shell.js";
-import { NOCHES, HOURS, FAQ, DJ_DIAS, wa, pic } from "./data.js";
+import { NOCHES, HOURS, FAQ, DJ_DIAS, wa, pic, SUPABASE } from "./data.js";
 
 const { gsap, ScrollTrigger } = window;
 gsap.registerPlugin(ScrollTrigger);
@@ -120,12 +120,34 @@ if (page === "celebraciones") {
   const form = $(".form");
   const date = $("#f-fecha");
   date.min = new Date().toISOString().slice(0, 10);
+  const err = $(".form-error", form);
+  // datos que esta persona ya dejó en esta web o en el QR (se guardan solo en su móvil): se rellenan solos
+  const MIS = "mis_datos";
+  let mis = null; try { mis = JSON.parse(localStorage.getItem(MIS) || "null"); } catch {}
+  if (mis) [["f-nombre", mis.nombre], ["f-telefono", mis.telefono], ["f-email", mis.email]].forEach(([id, v]) => { const el = $(`#${id}`); if (el && v && !el.value) el.value = v; });
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const f = new FormData(form);
+    err.textContent = "";
+    if (f.get("email") && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(f.get("email")).trim())) { err.textContent = "Revisa tu email."; $("#f-email").focus(); return; }
+    if (String(f.get("telefono")).replace(/\D/g, "").length < 9) { err.textContent = "Revisa tu WhatsApp: tiene que tener al menos 9 cifras."; $("#f-telefono").focus(); return; }
+    // copia en nuestra base. Va en segundo plano (keepalive) para que WhatsApp se abra al instante, en el mismo toque
+    try {
+      fetch(`${SUPABASE.url}/rest/v1/rpc/registrar_reserva`, {
+        method: "POST", keepalive: true,
+        headers: { apikey: SUPABASE.key, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          p_negocio: SUPABASE.negocio, p_nombre: f.get("nombre"), p_telefono: f.get("telefono"), p_email: f.get("email") || null,
+          p_tipo: f.get("tipo"), p_fecha: f.get("fecha") || null, p_hora: f.get("hora") || null, p_personas: Number(f.get("personas")) || null,
+          p_mensaje: f.get("mensaje") || null, p_acepta_privacidad: f.get("privacidad") === "on", p_acepta_promos: f.get("promos") === "on",
+        }),
+      }).catch(() => {});
+    } catch {}
+    try { localStorage.setItem(MIS, JSON.stringify({ ...(mis || {}), nombre: f.get("nombre"), telefono: f.get("telefono"), ...(f.get("email") ? { email: f.get("email") } : {}) })); } catch {}
     const text = [
       `¡Hola Alegría 2.0! Soy ${f.get("nombre")} y quiero celebrar ${f.get("tipo").toLowerCase()} con vosotros.`,
       f.get("fecha") && `📅 ${new Date(f.get("fecha") + "T12:00").toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}`,
+      f.get("hora") && f.get("hora") !== "Aún no lo sé" && `🕘 Hora: ${f.get("hora") === "Más tarde" ? "a partir de las 00:00" : f.get("hora")}`,
       `👥 Somos ${f.get("personas")}`,
       f.get("mensaje") && `📝 ${f.get("mensaje")}`,
     ].filter(Boolean).join("\n");

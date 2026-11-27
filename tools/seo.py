@@ -24,7 +24,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 WEB = ROOT / "web"
 DEMO = bool(re.search(r"^DEMO = True", (ROOT / "tools/paginas.py").read_text(), re.M))
 KARAOKE_H = re.search(r'export const KARAOKE = "([^"]*)"', (WEB / "js/data.js").read_text())[1].replace("\u00a0", " ")
-SITE_URL = "https://alegria2punto0.es"  # PENDIENTE: dominio definitivo con el cliente
+SITE_URL = "https://www.alegria20.es"  # dominio definitivo (pendiente de registrar)
 if DEMO:  # la demo vive en Vercel: así la vista previa al compartir el enlace (WhatsApp…) sí sale
     SITE_URL = "https://alegria-2-0.vercel.app"
 CARTA_REAL = False                       # PENDIENTE: carta y precios reales del cliente

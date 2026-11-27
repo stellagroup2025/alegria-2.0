@@ -76,3 +76,7 @@ export const pic = (src, sizes) => {
   const b = src.replace(/\.jpg$/, "");
   return `src="${b}-800.jpg" srcset="${b}-800.jpg 800w, ${b}-1400.jpg 1400w, ${src} 2000w" sizes="${sizes}"`;
 };
+
+// Base de datos común de clientes (Supabase). La clave publicable puede ir en la web: las tablas están cerradas
+// y desde fuera solo se puede llamar a las funciones de apuntarse y de registrar una petición de reserva.
+export const SUPABASE = { url: "https://zbcjhcvjnpigesvfyibe.supabase.co", key: "sb_publishable_QKlh63AKSawSyepIhJy_Ng_8tqDXrwd", negocio: "alegria-2-0" };

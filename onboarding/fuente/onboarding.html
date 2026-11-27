@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Bienvenida · Alegría 2.0</title>
+<style>
+@font-face{font-family:Shrikhand;src:url(shrikhand-latin-486ff6.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:Shrikhand;src:url(shrikhand-latin-ext-98ca82.woff2) format('woff2');unicode-range:U+0100-02BA,U+1E00-1EFF}
+@font-face{font-family:Unbounded;src:url(unbounded-latin-37e641.woff2) format('woff2');font-weight:200 900;unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:Unbounded;src:url(unbounded-latin-ext-936fcc.woff2) format('woff2');font-weight:200 900;unicode-range:U+0100-02BA,U+1E00-1EFF}
+:root{--night:#0a0610;--ink:#1d1424;--muted:#6b5f73;--pink:#ff2fb3;--dpink:#cf0079;--cyan:#19e6ff;--dteal:#00788e;--paper:#fff6fb;--line:#f1d9e8;--soft:#fdeaf5}
+@page{size:A4;margin:16mm 16mm 18mm}
+@page cover{margin:0}
+@page dark{margin:0}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;font:10pt/1.55 -apple-system,"SF Pro Text","Helvetica Neue",Arial,sans-serif;color:var(--ink);background:#fff}
+h1,h2,h3{margin:0;font-weight:400}
+h2{font-family:Shrikhand;color:var(--dpink);font-size:24pt;line-height:1.1;margin:0 0 4mm}
+h3{font-family:Unbounded;font-weight:700;font-size:10.5pt;margin:6mm 0 2mm;color:var(--ink)}
+p{margin:0 0 2.6mm}
+.kicker{font-family:Unbounded;font-weight:600;font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--dteal);margin-bottom:2mm}
+.lead{font-size:12pt;line-height:1.5;color:var(--ink);margin-bottom:5mm}
+.muted{color:var(--muted)}
+.section{break-before:page}
+.avoid{break-inside:avoid}
+b,strong{font-weight:650}
+ul{margin:0 0 3mm;padding-left:5mm}li{margin:0 0 1.4mm}
+
+/* portada */
+.cover{page:cover;width:210mm;height:297mm;position:relative;overflow:hidden;color:#fff;
+  background:radial-gradient(120mm 120mm at 20% 18%,rgba(255,47,179,.55),transparent 70%),radial-gradient(130mm 130mm at 90% 85%,rgba(25,230,255,.35),transparent 70%),linear-gradient(160deg,#2a0b3d,#0a0610 60%)}
+.cover .seal{position:absolute;top:34mm;left:50%;width:92mm;transform:translateX(-50%)}
+.cover .t{position:absolute;left:18mm;right:18mm;top:142mm;text-align:center}
+.cover .t .k{font-family:Unbounded;font-weight:600;letter-spacing:.22em;font-size:8.5pt;color:var(--cyan)}
+.cover .t h1{font-family:Shrikhand;font-size:40pt;line-height:1.05;margin:5mm 0 6mm}
+.cover .t p{font-size:12pt;max-width:140mm;margin:0 auto;color:#f3e6f7}
+.cover .foot{position:absolute;left:18mm;right:18mm;bottom:16mm;display:flex;justify-content:space-between;font-family:Unbounded;font-size:7.5pt;letter-spacing:.08em;color:#cdb9d6}
+
+/* objetivo */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;margin:4mm 0 6mm}
+.stat{padding:1mm 0}
+.stat .n{font-family:Unbounded;font-weight:800;font-size:17pt;color:var(--dpink);line-height:1}
+.stat .l{font-size:8.5pt;color:var(--muted);margin-top:2mm;line-height:1.35}
+.goals{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin-top:3mm}
+.goal{padding:1mm 0}
+.goal .h{font-family:Unbounded;font-weight:700;font-size:10pt;margin-bottom:1.5mm}
+.goal .h span{color:var(--pink);margin-right:2mm}
+.goal p{font-size:9pt;margin:0}
+.flow{display:flex;align-items:stretch;gap:0;margin:6mm 0 3mm}
+.flow .s{flex:1;padding:1mm 0;font-size:8.5pt;line-height:1.35}
+.flow .s b{display:block;font-family:Unbounded;font-weight:700;font-size:8.5pt;color:var(--dpink);margin-bottom:1mm}
+.flow .a{width:6mm;display:flex;align-items:center;justify-content:center;color:var(--pink);font-weight:800;font-size:13pt}
+.flow-loop{font-size:8.5pt;color:var(--muted);text-align:right}
+
+/* tablas */
+table{width:100%;border-collapse:collapse;font-size:8.8pt;margin:2mm 0 4mm}
+th{font-family:Unbounded;font-weight:700;font-size:7.5pt;letter-spacing:.06em;text-transform:uppercase;text-align:left;color:var(--ink);border-bottom:1.4pt solid var(--ink);padding:2.4mm 3mm 2mm}
+td{padding:2.4mm 3mm;border-bottom:.8pt solid var(--line);vertical-align:top}
+tr{break-inside:avoid}
+td:first-child{font-weight:650}
+.tag{font-family:Unbounded;font-weight:700;font-size:7pt;letter-spacing:.05em;white-space:nowrap}
+.ok{color:var(--dteal)}.wait{color:var(--dpink)}
+
+/* bloques por entregable */
+.why{margin:4mm 0}
+.why .w{font-family:Unbounded;font-weight:700;font-size:7.5pt;letter-spacing:.1em;text-transform:uppercase;color:var(--dpink);margin-bottom:1.5mm}
+.why ul{margin:0}
+.shot{border-radius:2mm;overflow:hidden}
+.shot img{display:block;width:100%}
+.cap{font-size:7.8pt;color:var(--muted);margin-top:1.5mm}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin:3mm 0}
+.qrgrid{display:grid;grid-template-columns:54mm 1fr;gap:6mm;align-items:start;margin:2mm 0 2mm}
+.phones{display:grid;grid-template-columns:1fr 1fr;gap:5mm}
+.phones .shot{border-radius:4mm}
+.phones .shot img{height:78mm;object-fit:cover;object-position:top}
+.qrpage .why li{font-size:9pt;margin-bottom:1mm}.qrpage .lead{margin-bottom:3mm}
+.note{margin:3mm 0}
+.logo-row{display:grid;grid-template-columns:52mm 1fr;gap:7mm;align-items:center}
+.cartel{display:grid;grid-template-columns:60mm 1fr;gap:7mm;align-items:start}
+.checks{list-style:none;padding:0}
+.checks li{padding-left:7mm;position:relative}
+.checks li:before{content:"";position:absolute;left:0;top:.9mm;width:3.4mm;height:3.4mm;border:1.2pt solid var(--dpink);border-radius:1mm}
+
+/* anexo */
+.annex-cover{page:dark;break-before:page;width:210mm;height:297mm;background:linear-gradient(160deg,#2a0b3d,#0a0610 65%);color:#fff;display:flex;flex-direction:column;justify-content:center;padding:0 22mm}
+.annex-cover .k{font-family:Unbounded;font-weight:600;letter-spacing:.22em;font-size:8.5pt;color:var(--cyan)}
+.annex-cover h2{color:#fff;font-size:34pt;margin:5mm 0}
+.annex-cover p{font-size:11.5pt;color:#eadcf0;max-width:150mm}
+.week{break-before:page}
+.post{break-inside:avoid;border-top:.8pt solid var(--line);padding:3.5mm 0 1mm;margin:0 0 2mm}
+.post .ph{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.5mm}
+.post .d{font-family:Unbounded;font-weight:700;font-size:9.5pt}
+.post .f{font-family:Unbounded;font-weight:600;font-size:7pt;letter-spacing:.06em;text-transform:uppercase;color:var(--dteal)}
+.post .cap2{font-size:9.5pt;margin:1.5mm 0}
+.post .meta{font-size:8pt;color:var(--muted)}
+.post p{font-size:9pt;margin:0 0 1.2mm}
+</style>
+</head>
+<body>
+
+<!-- PORTADA -->
+<section class="cover">
+  <img class="seal" src="sello-color.png" alt="">
+  <div class="t">
+    <div class="k">DOCUMENTO DE BIENVENIDA</div>
+    <h1>Todo lo que hemos preparado para tu vuelta</h1>
+    <p>Qué te entregamos, por qué lo hemos hecho así y qué queremos conseguir juntos a partir de la reapertura del sábado 5 de diciembre.</p>
+  </div>
+  <div class="foot"><span>ALEGRÍA 2.0 · DISCO PUB · VALLECAS</span><span>DICIEMBRE 2026</span></div>
+</section>
+
+<!-- OBJETIVO -->
+<section>
+  <div class="kicker">01 · El objetivo</div>
+  <h2>Llenar el local de martes a domingo, y que la gente vuelva</h2>
+  <p class="lead">Todo el trabajo tiene un mismo fin: que cada persona que pasa por Alegría 2.0 te encuentre antes, venga, lo cuente y repita. Cada pieza que te entregamos cubre uno de esos pasos.</p>
+
+  <h3>De dónde partimos</h3>
+  <p>Antes de empezar revisamos cómo aparecía el local en internet. Esto es lo que encontramos en noviembre de 2026:</p>
+  <div class="stats">
+    <div class="stat"><div class="n">0</div><div class="l">páginas web: quien te buscaba solo encontraba la ficha de Google</div></div>
+    <div class="stat"><div class="n">2</div><div class="l">publicaciones en Instagram en tres años, con 26 seguidores</div></div>
+    <div class="stat"><div class="n">3,4★</div><div class="l">nota en Google, con solo 23 reseñas</div></div>
+    <div class="stat"><div class="n">0</div><div class="l">formas de avisar a los clientes de una fiesta, salvo de boca en boca</div></div>
+  </div>
+  <p>Un local con karaoke, DJ y fiestas como la Viejoteca tiene mucho que contar, pero casi nada de eso se veía. La gente que te busca por el móvil («karaoke latino Vallecas», «bar para cumpleaños en Madrid») acababa en otro sitio.</p>
+
+  <h3>Los cuatro objetivos</h3>
+  <div class="goals">
+    <div class="goal"><div class="h"><span>1</span>Que te encuentren</div><p>Aparecer en Google y en Instagram cuando alguien busca un plan latino en Vallecas o en Madrid.</p></div>
+    <div class="goal"><div class="h"><span>2</span>Que vengan</div><p>Que, al ver la web o las redes, entren ganas de ir esa misma noche: karaoke, pista, cumpleaños.</p></div>
+    <div class="goal"><div class="h"><span>3</span>Que vuelvan</div><p>Tener una forma propia de avisar a tus clientes de las fiestas: tu canal de WhatsApp y tu lista de la familia Alegría.</p></div>
+    <div class="goal"><div class="h"><span>4</span>Que te recomienden</div><p>Subir la nota y el número de reseñas en Google, que es lo primero que mira quien no te conoce.</p></div>
+  </div>
+
+  <h3>Cómo encaja todo</h3>
+  <div class="flow avoid">
+    <div class="s"><b>Te descubren</b>Google, Instagram o el cartel de la puerta</div><div class="a">›</div>
+    <div class="s"><b>Te conocen</b>La web: experiencias, ambiente, cómo llegar</div><div class="a">›</div>
+    <div class="s"><b>Vienen</b>Karaoke de martes a domingo, de 20:00 a 23:00</div><div class="a">›</div>
+    <div class="s"><b>QR de la mesa</b>Dejan su reseña o se unen a la familia</div><div class="a">›</div>
+    <div class="s"><b>Vuelven</b>Les avisas de cada fiesta por WhatsApp</div>
+  </div>
+  <p class="flow-loop">Y cada reseña y cada publicación vuelve a atraer a gente nueva al primer paso.</p>
+</section>
+
+<!-- RESUMEN -->
+<section class="section">
+  <div class="kicker">02 · Lo que te entregamos</div>
+  <h2>Siete piezas, un mismo estilo</h2>
+  <p class="lead">Todas las piezas comparten los colores neón del local, el logo del sello y la misma forma de hablar: cercana, alegre y con los datos reales del local.</p>
+  <table>
+    <thead><tr><th style="width:24%">Pieza</th><th>Para qué sirve</th><th style="width:20%">Estado</th></tr></thead>
+    <tbody>
+      <tr><td>Página web</td><td>Tu escaparate en internet: qué se vive en el local, celebraciones, ambiente, horario y cómo llegar.</td><td><span class="tag ok">HECHA</span><br><span class="muted" style="font-size:8pt">Se publicará en www.alegria20.es</span></td></tr>
+      <tr><td>Posicionamiento en Google</td><td>Que la web aparezca en búsquedas como «karaoke latino Vallecas» y en los asistentes de IA.</td><td><span class="tag ok">PREPARADO</span><br><span class="muted" style="font-size:8pt">Se activa al publicar la web</span></td></tr>
+      <tr><td>Logo e identidad</td><td>El sello con el micro y las maracas, en todas las versiones que vas a necesitar.</td><td><span class="tag ok">ENTREGADO</span></td></tr>
+      <tr><td>QR de mesa</td><td>Con un solo escaneo, el cliente deja su reseña en Google o se une a la familia Alegría.</td><td><span class="tag ok">HECHO</span><br><span class="muted" style="font-size:8pt">Funciona al publicar en www.alegria20.es</span></td></tr>
+      <tr><td>Familia Alegría</td><td>Formulario corto que guarda el contacto del cliente y lo lleva a tu canal de WhatsApp.</td><td><span class="tag ok">HECHO</span></td></tr>
+      <tr><td>Cartel A3 «¡Ya hemos vuelto!»</td><td>Para la puerta y el barrio, con un QR que lleva a la web.</td><td><span class="tag ok">LISTO PARA IMPRENTA</span></td></tr>
+      <tr><td>Calendario de Instagram</td><td>Cuatro semanas de publicaciones e historias, con los textos ya escritos, para ganar interacción.</td><td><span class="tag ok">HECHO</span><br><span class="muted" style="font-size:8pt">Del 30 nov al 27 dic · anexo</span></td></tr>
+    </tbody>
+  </table>
+  <div class="note"><b>Una regla que hemos seguido en todo:</b> no publicar nada que no sea seguro. Por eso no hay precios («precios en barra»), ni días de DJ, ni noches temáticas que no estén confirmadas. Si algo se promete en internet y luego no se cumple, la reseña llega igual, y es mala.</div>
+</section>
+
+<!-- WEB -->
+<section class="section">
+  <div class="kicker">03 · La página web</div>
+  <h2>Una web que se siente como entrar en el local</h2>
+  <p class="lead">Fondo oscuro, luces neón y cócteles en 3D que giran al bajar la página: la web tiene el mismo ambiente que Alegría 2.0 de noche. Quien la abre sabe al instante qué tipo de sitio es.</p>
+  <div class="two">
+    <div><div class="shot"><img src="web-home.jpg" alt=""></div><div class="cap">Inicio: el mensaje «Ya hemos vuelto» y las cinco experiencias.</div></div>
+    <div><div class="shot"><img src="web-cele.jpg" alt=""></div><div class="cap">Celebraciones: cumpleaños, despedidas y grupos.</div></div>
+  </div>
+  <h3>Qué tiene</h3>
+  <ul>
+    <li><b>Inicio:</b> la vuelta del local, las cinco experiencias (Karaoke, DJ en cabina, Pista latina, Viejoteca y Cumpleaños) y el horario del karaoke.</li>
+    <li><b>Experiencias, Ambiente y Celebraciones:</b> qué se vive cada noche y cómo pedir sitio para un grupo, con botón directo a WhatsApp.</li>
+    <li><b>Contacto:</b> dirección, horario, mapa y preguntas frecuentes.</li>
+    <li><b>Páginas legales:</b> aviso legal, privacidad y cookies, obligatorias para cualquier web de un negocio.</li>
+  </ul>
+  <div class="why avoid">
+    <div class="w">Por qué la hemos hecho así</div>
+    <ul>
+      <li><b>Experiencias, no días fijos.</b> Solo el horario del karaoke está confirmado. Hablar de experiencias deja libertad para organizar cada semana sin que la web se quede desfasada.</li>
+      <li><b>Pensada para el móvil.</b> Casi todo el que busca un plan de noche lo hace desde el teléfono. Todo se lee y se pulsa bien con una mano.</li>
+      <li><b>WhatsApp como botón principal.</b> Es como ya habla tu clientela: reservar para un cumpleaños es un mensaje, no un formulario.</li>
+      <li><b>Sin carta ni precios.</b> El local no tiene carta, así que no inventamos una. Los precios se dan en barra.</li>
+      <li><b>Sin banner de cookies.</b> Las fuentes van dentro de la propia web y el mapa solo se carga si se pulsa, así que la web no necesita pedir permiso a nadie al entrar.</li>
+      <li><b>Fotos de ambiente, hasta tener las reales.</b> Las fotos actuales son imágenes de ambiente creadas para la web. Tras la reapertura las sustituiremos por fotos reales del local, que siempre funcionan mejor.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- SEO -->
+<section class="section">
+  <div class="kicker">04 · Google y buscadores</div>
+  <h2>Preparada para que te encuentren</h2>
+  <p class="lead">Una web bonita no sirve si nadie llega a ella. Por eso la hemos preparado para Google desde el primer día, con lo que de verdad busca tu público.</p>
+  <ul>
+    <li><b>Títulos y textos con búsquedas reales:</b> «disco pub latino con karaoke en Vallecas», «cumpleaños y grupos», «karaoke, DJ y fiesta latina».</li>
+    <li><b>Ficha del negocio para Google:</b> dirección, horario, teléfono y tipo de local en un formato que Google lee directamente.</li>
+    <li><b>Preguntas frecuentes</b> («¿A qué hora es el karaoke?», «¿Puedo celebrar mi cumpleaños?»), que Google puede mostrar tal cual en sus resultados.</li>
+    <li><b>Mapa del sitio y lectura para asistentes de IA</b> (ChatGPT, Gemini y similares), para que también puedan recomendar el local.</li>
+    <li><b>Velocidad:</b> imágenes optimizadas y carga rápida en el móvil, algo que Google tiene en cuenta.</li>
+  </ul>
+  <div class="why avoid">
+    <div class="w">Por qué ahora está «en pausa»</div>
+    <p>Mientras la web vive en una dirección de pruebas, le pedimos a Google que no la muestre. Así no indexa una dirección provisional que luego habría que corregir. En cuanto la web se publique en <b>www.alegria20.es</b>, se activa todo de una vez.</p>
+  </div>
+  <h3>El papel de las reseñas</h3>
+  <p>La ficha de Google Maps es, para muchos clientes, lo primero que ven. Hoy tiene una nota de 3,4 con 23 reseñas: con tan pocas, una sola mala opinión pesa muchísimo. Cada cliente contento que deja su reseña sube la nota y hace que Google te muestre más. Para eso existe el QR de mesa de la página siguiente.</p>
+
+  <div class="kicker" style="margin-top:9mm">05 · Logo e identidad</div>
+  <h2>Un sello que se reconoce en cualquier tamaño</h2>
+  <div class="logo-row avoid">
+    <img src="sello-color.png" alt="" style="width:100%">
+    <div>
+      <p>El logo es un sello redondo con el nombre, «Disco Pub · Madrid», el micro del karaoke y las maracas. Resume el local en un vistazo: música latina, karaoke y fiesta.</p>
+      <p><b>Te entregamos el kit completo:</b> sello en color, en blanco, en negro y en rosa; el símbolo solo (micro y maracas); y el icono para el móvil y la pestaña del navegador.</p>
+      <p class="muted">Por qué en forma de sello: funciona igual de bien en una foto de perfil de Instagram (que es redonda), en un vaso, en una pegatina o en la puerta.</p>
+    </div>
+  </div>
+</section>
+
+<!-- QR -->
+<section class="section qrpage">
+  <div class="kicker">06 · QR de mesa y familia Alegría</div>
+  <h2>Un escaneo, dos opciones</h2>
+  <p class="lead">El QR va en las mesas y en la barra. Al escanearlo, el cliente ve solo dos botones: dejar su reseña en Google o unirse a la familia Alegría.</p>
+  <div class="qrgrid avoid">
+    <div>
+      <img src="qr-sello-mesa-alegria20.png" alt="" style="width:100%">
+      <div class="cap" style="text-align:center">Abre la página de las dos opciones:<br><b>www.alegria20.es/qr/</b></div>
+    </div>
+    <div class="phones">
+      <div><div class="shot"><img src="qr-movil.jpg" alt=""></div><div class="cap">Lo que ve el cliente al escanear.</div></div>
+      <div><div class="shot"><img src="unete-movil.jpg" alt=""></div><div class="cap">«Únete a la familia»: nombre, WhatsApp y cumpleaños.</div></div>
+    </div>
+  </div>
+  <div class="why avoid">
+    <div class="w">Por qué lo hemos hecho así</div>
+    <ul>
+      <li><b>Solo dos botones.</b> En un bar, con el móvil en una mano y la copa en la otra, nadie lee un menú. Cuantas menos opciones, más gente termina lo que empieza.</li>
+      <li><b>Reseña en un toque.</b> El botón abre directamente la ventana para puntuar el local en Google, sin buscar nada. Es la forma más eficaz de subir la nota.</li>
+      <li><b>Tu propia lista de clientes.</b> Instagram puede enseñar o esconder tus publicaciones; un contacto de WhatsApp es tuyo. Con la familia Alegría avisas de cada Viejoteca o noche especial directamente al móvil.</li>
+      <li><b>El cumpleaños, opcional.</b> Saber cuándo cumple cada cliente te permite invitarle a celebrarlo en el local.</li>
+      <li><b>El QR con la forma del logo.</b> Los puntos del código dibujan el micro y las maracas, así que se reconoce como algo del local y no como un QR cualquiera. Lo hemos probado con fotos de móvil simuladas (de lado, borrosas, con reflejos) y se lee en todos los casos.</li>
+    </ul>
+  </div>
+  <p><b>Los datos, protegidos:</b> el cliente acepta la política de privacidad antes de apuntarse, y desde la web solo es posible apuntarse; nadie puede consultar la lista desde fuera. La tarjeta de sellos (premio por visitas) está preparada y apagada; la activamos cuando quieras.</p>
+  <div class="note"><b>Importante:</b> este QR apunta a la dirección definitiva, www.alegria20.es. No lo pongas en las mesas hasta que publiquemos la web en www.alegria20.es. Te avisaremos en cuanto esté activo.</div>
+</section>
+
+<!-- CARTEL + INSTAGRAM -->
+<section class="section">
+  <div class="kicker">07 · Cartel de la reapertura</div>
+  <h2>«¡Ya hemos vuelto!»</h2>
+  <div class="cartel avoid">
+    <div class="shot"><img src="cartel.jpg" alt=""></div>
+    <div>
+      <p>Cartel A3 para la puerta del local y los comercios del barrio. Anuncia la vuelta del local y lleva un QR que abre la web.</p>
+      <p><b>Te lo entregamos en PDF listo para imprenta</b> y en imagen para compartirlo por WhatsApp o en historias.</p>
+      <div class="why">
+        <div class="w">Por qué un cartel</div>
+        <p>Mucha de tu clientela es del barrio y pasa por delante. Un cartel en la puerta es la forma más directa de avisar de que el local vuelve a estar abierto, y el QR convierte a quien pasa en visita de la web.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="kicker" style="margin-top:9mm">08 · Instagram</div>
+  <h2>De 26 seguidores a una cuenta con vida</h2>
+  <p>Instagram muestra más una cuenta cuanta más gente comenta, vota y comparte. Por eso el calendario no está hecho para «anunciar cosas», sino para <b>hacer participar</b>: cada publicación termina con una pregunta, un reto o una votación.</p>
+  <ul>
+    <li><b>3 publicaciones a la semana</b> (lunes, jueves y sábado), con el texto, la foto y los hashtags ya preparados.</li>
+    <li><b>Al menos 2 historias cada día:</b> una por la tarde para que la gente decida su plan y otra por la noche con lo que pasa en el local.</li>
+    <li><b>La primera semana es una cuenta atrás</b> hasta la reapertura del sábado 5 de diciembre a las 20:00.</li>
+    <li><b>Un sorteo en diciembre,</b> que es lo que más seguidores nuevos atrae.</li>
+    <li><b>Responder siempre</b> a comentarios y mensajes en menos de 24 horas.</li>
+  </ul>
+  <p>Las primeras semanas usaremos las fotos de ambiente; en cuanto el local esté abierto, las fotos y los vídeos reales. El calendario completo está en el anexo de este documento.</p>
+</section>
+
+<!-- PENDIENTES -->
+<section class="section">
+  <div class="kicker">09 · Próximos pasos</div>
+  <h2>Lo que necesitamos de ti</h2>
+  <p class="lead">Con estos datos terminamos de activar todo. Cuanto antes los tengamos, antes empieza a funcionar.</p>
+  <ul class="checks">
+    <li><b>Datos legales del negocio</b> (titular, NIF, domicilio y email) para el aviso legal y la política de privacidad.</li>
+    <li><b>Enlace de tu canal de WhatsApp,</b> para que la familia Alegría lleve directamente a él.</li>
+    <li><b>Días de DJ,</b> si son fijos, para anunciarlos en la web y en Instagram.</li>
+    <li><b>Premio del sorteo</b> del 12 de diciembre.</li>
+    <li><b>Si abrís el 24 y el 25 de diciembre,</b> y con qué horario.</li>
+    <li><b>Fecha de la próxima Viejoteca.</b></li>
+    <li><b>Fotos y vídeos reales</b> del local desde la reapertura (con el móvil en vertical vale).</li>
+    <li><b>Quién del equipo</b> publica las historias diarias y responde los comentarios.</li>
+  </ul>
+
+  <h3>Cómo sabremos que funciona</h3>
+  <table class="avoid">
+    <thead><tr><th style="width:34%">Qué miramos</th><th>Dónde</th><th style="width:30%">Hoy</th></tr></thead>
+    <tbody>
+      <tr><td>Nota y número de reseñas</td><td>Ficha de Google Maps</td><td>3,4★ · 23 reseñas</td></tr>
+      <tr><td>Seguidores e interacción</td><td>Estadísticas de Instagram, cada lunes</td><td>26 seguidores · 2 publicaciones</td></tr>
+      <tr><td>Personas en la familia Alegría</td><td>Altas del formulario y miembros del canal</td><td>Empieza el 5 de diciembre</td></tr>
+      <tr><td>Visitas a la web y clics a WhatsApp</td><td>Estadísticas de la web</td><td>Empieza al publicar en www.alegria20.es</td></tr>
+    </tbody>
+  </table>
+  <p class="muted">Revisaremos estos números a final de mes para ver qué funciona mejor y ajustar el plan de enero.</p>
+</section>
+
+<!-- ANEXO -->
+<section class="annex-cover">
+  <div class="k">ANEXO</div>
+  <h2>Calendario de Instagram</h2>
+  <p>Del lunes 30 de noviembre al domingo 27 de diciembre de 2026. Cada publicación lleva su texto listo para copiar, la foto que se usa ahora y la foto real que la sustituye en cuanto el local esté abierto.</p>
+</section>
+
+<section>
+  <div class="kicker">Anexo · Normas</div>
+  <h2>Cómo usar el calendario</h2>
+  <ul>
+    <li><b>Publicaciones:</b> lunes, jueves y sábado. El lunes, con el local cerrado, va una pregunta que prepara la semana; el jueves, un Reel; el sábado, un post para el fin de semana.</li>
+    <li><b>Historias:</b> mínimo 2 al día, todos los días, también el lunes. Cada una con un elemento interactivo: encuesta, pregunta, slider, cuestionario o cuenta atrás.</li>
+    <li><b>Responder siempre</b> comentarios y mensajes en menos de 24 h.</li>
+    <li><b>Compartir</b> en las historias del local toda historia en la que os etiqueten.</li>
+    <li><b>Datos que se pueden usar:</b> karaoke de martes a domingo, de 20:00 a 23:00; abierto de martes a domingo desde las 20:00; C. del Puerto de Pajares 3, Vallecas; WhatsApp 625 92 44 29.</li>
+    <li><b>Lo que no se publica:</b> precios, días de DJ sin confirmar y noches que no existan.</li>
+  </ul>
+
+  <h3>Historias diarias (mínimo 2)</h3>
+  <table>
+    <thead><tr><th style="width:16%">Día</th><th>Tarde · 18:00–19:00</th><th>Noche · 21:00–00:00</th></tr></thead>
+    <tbody>
+      <tr><td>Lunes</td><td>Caja de preguntas: «¿Qué canción no puede faltar esta semana?»</td><td>Lo mejor del fin de semana o historias de clientes compartidas</td></tr>
+      <tr><td>Martes</td><td>«Vuelve el micro: karaoke de 20:00 a 23:00» + encuesta «¿Vienes hoy?»</td><td>Vídeo de alguien cantando o de la pantalla del karaoke</td></tr>
+      <tr><td>Miércoles</td><td>Cuestionario: «Adivina la canción por los emojis»</td><td>La barra preparando copas + slider «¿Cuántas ganas de fiesta?»</td></tr>
+      <tr><td>Jueves</td><td>Compartir el Reel del día: «¿Tú te atreves?»</td><td>Pista o karaoke en directo</td></tr>
+      <tr><td>Viernes</td><td>Encuesta: «¿Bachata o vallenato esta noche?»</td><td>Pista llena + «etiqueta a @laalegria_2.0 para salir en la cuenta»</td></tr>
+      <tr><td>Sábado</td><td>Cuenta atrás hasta las 20:00 o recordatorio del post</td><td>Lo más cantado de la noche</td></tr>
+      <tr><td>Domingo</td><td>«Última noche de karaoke de la semana» + encuesta</td><td>Vídeo del ambiente o despedida del equipo</td></tr>
+    </tbody>
+  </table>
+  <p><b>Del 30 nov al 4 dic (local aún cerrado):</b> la historia de la tarde lleva el sticker «Cuenta atrás» hasta el sábado 5 a las 20:00; la de la noche es un adelanto del local preparándose (el neón, el micro, la barra). <b>Viernes y sábado</b> se puede añadir una tercera hacia la 01:00.</p>
+</section>
+
+<section class="week">
+  <div class="kicker">Semana 1 · 30 nov – 6 dic</div>
+  <h2>Cuenta atrás y reapertura</h2>
+  <div class="post"><div class="ph"><span class="d">Lun 30 nov · «Volvemos el 5 de diciembre»</span><span class="f">Carrusel · 3 fotos</span></div>
+    <div class="cap2">¡VOLVEMOS! 🎤✨ El sábado 5 de diciembre, a las 20:00, se enciende otra vez el micro. Desde ese día: karaoke de martes a domingo, de 20:00 a 23:00, y después pista latina hasta el cierre. Para estrenarlo os toca a vosotros: ¿qué canción no puede faltar esta semana? Déjala en comentarios y las más pedidas entran en la lista 👇<br>📍 C. del Puerto de Pajares 3, Vallecas</div>
+    <div class="meta">Acción: comentar una canción · Hashtags: set A · Fotos: fachada, chica cantando, pista llena → reales: puerta encendida, micro, pista</div></div>
+  <div class="post"><div class="ph"><span class="d">Jue 3 dic · «Así suena el karaoke»</span><span class="f">Reel · 15 s</span></div>
+    <p>Vídeo: alguien cantando con la pantalla detrás y el público coreando; texto «¿Tú a quién traerías a cantar?». Como el local aún no ha abierto, se monta con las fotos del karaoke, zoom lento y el rótulo «Faltan 2 días».</p>
+    <div class="cap2">Aquí no se canta bien, se canta con ganas 😅🎶 Etiqueta a tu pareja de karaoke, esa persona que siempre pide «la última». Volvemos este sábado 5 de diciembre, con karaoke de 20:00 a 23:00 y pista hasta el cierre.</div>
+    <div class="meta">Acción: etiquetar a un amigo · Hashtags: set A</div></div>
+  <div class="post"><div class="ph"><span class="d">Sáb 5 dic · «¡Hoy volvemos!»</span><span class="f">Carrusel · 6 fotos</span></div>
+    <p>Portada «¡Hoy volvemos! · Sábado 5 de diciembre · 20:00» y una diapositiva por experiencia: Karaoke 🎤 · DJ en cabina 🎧 · Pista latina 💃 · Viejoteca 🎶 · Cumpleaños 🎂.</p>
+    <div class="cap2">¡HOY VOLVEMOS! 🎉 Desde las 20:00 os esperamos en C. del Puerto de Pajares 3. Cinco formas de vivir una noche en Alegría 2.0: ¿cuál es la tuya? Responde con su emoji: 🎤 🎧 💃 🎶 🎂. Y si cumples este mes, dinos el día: lo celebramos contigo.</div>
+    <div class="meta">Acción: comentar con un emoji · Hashtags: set B · Foto real: la fachada encendida ese mismo día</div></div>
+
+</section>
+
+<section class="week">
+  <div class="kicker">Semana 2 · 7 – 13 dic</div>
+  <h2>Vuestras canciones</h2>
+  <div class="post"><div class="ph"><span class="d">Lun 7 dic · «Esta semana suenan las vuestras»</span><span class="f">Carrusel · 2</span></div>
+    <p>Diapositiva 2: las 5 canciones más pedidas en los comentarios del 30 de noviembre, con el usuario de quien la pidió.</p>
+    <div class="cap2">Lo prometido es deuda 🎤 Estas son las canciones que pedisteis y esta semana suenan en el karaoke. ¿La tuya no está? Coméntala aquí y entra en la lista de la próxima semana. Karaoke de martes a domingo, de 20:00 a 23:00.</div>
+    <div class="meta">Acción: comentar y etiquetar a quien la canta mejor · Hashtags: set A</div></div>
+  <div class="post"><div class="ph"><span class="d">Jue 10 dic · «El estribillo más gritado»</span><span class="f">Reel · 15 s</span></div>
+    <p>Vídeo: el momento en que todo el bar canta a la vez; texto «¿Qué canción hace que cante todo el bar?».</p>
+    <div class="cap2">Hay canciones que no se cantan, se gritan 🙌 ¿Cuál es esa canción que, en cuanto suena, no deja a nadie sentado? Te leemos en comentarios.</div>
+    <div class="meta">Acción: comentar y compartir en historias · Hashtags: set A</div></div>
+  <div class="post"><div class="ph"><span class="d">Sáb 12 dic · «Sorteo de diciembre»</span><span class="f">Post</span></div>
+    <div class="cap2">🎁 SORTEO 🎁 Para celebrar que hemos vuelto, sorteamos [PREMIO A CONFIRMAR]. Para participar: 1) Sigue a @laalegria_2.0 · 2) Dale a me gusta · 3) Etiqueta a 2 amigos con los que vendrías (cada comentario es una participación) · 4) Extra: compártelo en tus historias. Hasta el viernes 18 de diciembre a las 23:59; el ganador se anuncia el sábado 19. Solo mayores de 18 años. Instagram no patrocina ni gestiona este sorteo.</div>
+    <div class="meta">Acción: seguir, etiquetar y compartir · Hashtags: set B</div></div>
+</section>
+
+<section class="week">
+  <div class="kicker">Semana 3 · 14 – 20 dic</div>
+  <h2>La familia Alegría</h2>
+  <div class="post"><div class="ph"><span class="d">Lun 14 dic · «La canción de tus padres»</span><span class="f">Post</span></div>
+    <div class="cap2">Vallenato, cumbia, música popular… 🎶 Todos tenemos esa canción que sonaba en casa los domingos y que nuestros padres bailaban en el salón. ¿Cuál era la tuya? Cuéntanos también de dónde eres 🇨🇴🇻🇪🇪🇨🇵🇪🇩🇴 y con las más comentadas preparamos la próxima Viejoteca.</div>
+    <div class="meta">Acción: comentar canción y país · Hashtags: set C · Foto: cartel real de la Viejoteca o baile de pareja</div></div>
+  <div class="post"><div class="ph"><span class="d">Jue 17 dic · «Conoce al equipo»</span><span class="f">Reel · 20 s</span></div>
+    <p>Cada persona del equipo dice su nombre y su canción favorita del karaoke (3–4 s cada una) y al final «¿Y la tuya?». Solo con vídeo real del equipo; si no lo hay, se cambia por otro Reel de karaoke.</p>
+    <div class="cap2">Estas son las caras que os reciben de martes a domingo 💛 Cada uno tiene su canción para el karaoke. ¿Con cuál nos ganas tú?</div>
+    <div class="meta">Acción: comentar su canción favorita · Hashtags: set A</div></div>
+  <div class="post"><div class="ph"><span class="d">Sáb 19 dic · «Ganador + cumpleañeros»</span><span class="f">Carrusel · 2</span></div>
+    <div class="cap2">¡Gracias a todos los que habéis participado! 🎁 El premio es para @usuario: escríbenos por privado para recogerlo. Y ahora otra pregunta: ¿quién cumple años en enero? Dinos el día en comentarios. Si lo quieres celebrar con nosotros, escríbenos al 625 92 44 29 y te guardamos sitio para el grupo.</div>
+    <div class="meta">Acción: comentar el día del cumpleaños · Hashtags: set B</div></div>
+
+</section>
+
+<section class="week">
+  <div class="kicker">Semana 4 · 21 – 27 dic</div>
+  <h2>Navidad latina</h2>
+  <div class="post"><div class="ph"><span class="d">Lun 21 dic · «Adivina la canción»</span><span class="f">Carrusel · 4</span></div>
+    <p>Tres canciones latinas muy conocidas escritas solo con 4–5 emojis (las elige el equipo, sin poner la letra). La solución, el martes en historias.</p>
+    <div class="cap2">Juego de lunes 🧠🎶 Tres canciones que se cantan cada semana en nuestro karaoke, escritas solo con emojis. Escribe en comentarios cuáles son (1, 2, 3). Mañana damos la solución en historias y el karaoke vuelve de 20:00 a 23:00.</div>
+    <div class="meta">Acción: comentar las respuestas · Hashtags: set A</div></div>
+  <div class="post"><div class="ph"><span class="d">Jue 24 dic · «Feliz Navidad»</span><span class="f">Post</span></div>
+    <div class="cap2">🎄 ¡Feliz Navidad, familia Alegría! Gracias por llenar la pista desde que hemos vuelto. Una pregunta para esta noche: ¿qué canción latina no puede faltar en tu Navidad? ¿Y qué se come en tu casa en Nochebuena? 🥟🍖 Te leemos.</div>
+    <div class="meta">Acción: comentar canción y plato · Hashtags: set C · Si se abre el 24 o el 25, añadir el horario</div></div>
+  <div class="post"><div class="ph"><span class="d">Sáb 26 dic · «Gracias, familia Alegría»</span><span class="f">Reel · 20–30 s</span></div>
+    <p>Los mejores 2–3 segundos de cada vídeo del mes, con «Así ha sido nuestra vuelta» y al final «¿Qué hacemos en 2027?».</p>
+    <div class="cap2">Tres semanas desde que volvimos y ya sois familia 💛 Gracias por cada canción, cada baile y cada comentario. Ahora queremos saber qué te gustaría vivir aquí en 2027: ¿más Viejotecas, concursos de karaoke, noches de DJ? Ponlo en comentarios y lo tendremos en cuenta.</div>
+    <div class="meta">Acción: comentar ideas y compartir · Hashtags: set A</div></div>
+</section>
+
+<section class="week">
+  <div class="kicker">Anexo · Hashtags y perfil</div>
+  <h2>Hashtags, destacados y bio</h2>
+  <table>
+    <thead><tr><th style="width:18%">Set</th><th style="width:22%">Cuándo</th><th>Hashtags</th></tr></thead>
+    <tbody>
+      <tr><td>A · Karaoke</td><td>Karaoke y retos</td><td>#FamiliaAlegria #Alegria20 #KaraokeMadrid #KaraokeVallecas #KaraokeLatino #Vallecas #MadridDeNoche #MusicaLatina #PlanesMadrid</td></tr>
+      <tr><td>B · Planes</td><td>Experiencias, sorteo y cumpleaños</td><td>#FamiliaAlegria #Alegria20 #DiscoPubLatino #Vallecas #CumpleanosMadrid #PlanesMadrid #OcioMadrid #FiestaLatina #MadridDeNoche</td></tr>
+      <tr><td>C · Nostalgia</td><td>Viejoteca y Navidad</td><td>#FamiliaAlegria #Alegria20 #Viejoteca #Vallenato #Cumbia #ColombianosEnMadrid #VenezolanosEnMadrid #LatinosEnMadrid #Vallecas</td></tr>
+    </tbody>
+  </table>
+  <p><b>Destacados fijos del perfil:</b> Karaoke · Experiencias · Cumpleaños · Familia Alegría · Cómo llegar.</p>
+  <p><b>Bio propuesta:</b> Disco pub latino en Vallecas 🎤 Karaoke de martes a domingo, de 20:00 a 23:00 💃 Pista latina hasta el cierre 📍 C. del Puerto de Pajares 3. Con el enlace a la web y al canal de WhatsApp.</p>
+  <p><b>Vídeos para grabar la primera semana</b> (móvil en vertical, 7–15 s cada uno): la entrada, el neón encendido, la pantalla del karaoke con el micro, la pista llena, la barra sirviendo un cubo y el equipo saludando. Con eso se cubren los Reels del mes.</p>
+  <p><b>Cada lunes:</b> mirar comentarios por publicación, respuestas a historias, veces compartido o guardado y seguidores nuevos. Lo que funciona se repite; lo que no llega a 5 comentarios se cambia.</p>
+</section>
+
+</body>
+</html>

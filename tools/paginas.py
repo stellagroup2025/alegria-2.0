@@ -28,10 +28,10 @@ GRAD = '<div class="neon-gradient" aria-hidden="true"><i></i><i></i><i></i><i></
 
 def header(brand=True):
     # el sello del local (marca/logo) hace de logo en todas las páginas, también en la portada
-    left = '<a class="nav-seal" href="index.html" aria-label="Alegría 2.0, inicio"><img src="assets/icons/sello.svg" width="1588" height="1610" alt=""></a>\n        ' + \
-        '<a class="hero-pill is-home" href="index.html">Inicio</a>\n        ' + \
+    left = '<a class="nav-seal" href="./" aria-label="Alegría 2.0, inicio"><img src="assets/icons/sello.svg" width="1588" height="1610" alt=""></a>\n        ' + \
+        '<a class="hero-pill is-home" href="./">Inicio</a>\n        ' + \
         "\n        ".join(f'<a class="hero-pill" href="{h}">{t}</a>' for h, t in NAV)
-    menu = "\n    ".join(f'<a href="{h}">{t}</a>' for h, t in [("index.html", "Inicio")] + NAV + [("contacto.html", "Contacto")])
+    menu = "\n    ".join(f'<a href="{h}">{t}</a>' for h, t in [("./", "Inicio")] + NAV + [("contacto.html", "Contacto")])
     return f'''  <header class="site-header">
     <nav class="hero-nav" aria-label="Principal">
       <div class="hero-nav-left">
@@ -60,7 +60,7 @@ FOOTER = f'''  <footer class="site-footer">
     <img class="footer-seal" src="assets/icons/sello.svg" width="1588" height="1610" alt="Alegría 2.0 · Disco Pub · Madrid" loading="lazy">
     <div class="footer-logo" aria-hidden="true">Alegría</div>
     <nav class="footer-nav" aria-label="Pie">
-      <a class="hero-pill" href="index.html">Inicio</a>
+      <a class="hero-pill" href="./">Inicio</a>
       <a class="hero-pill" href="experiencias.html">Experiencias</a>
 {'      <a class="hero-pill" href="carta.html">Carta</a>' + chr(10) if PAGINA_CARTA else ''}      <a class="hero-pill" href="ambiente.html">Ambiente</a>
       <a class="hero-pill" href="celebraciones.html">Celebraciones</a>
@@ -139,7 +139,7 @@ def soon(slug):
         <h1 class="neon-sign">Próximamente</h1>
         <p class="page-lead">Estamos montando esta parte de la noche: luces, sonido y cada detalle en su sitio. Muy pronto, aquí.</p>
         <div class="soon-eq" aria-hidden="true"><span class="soon-bars">{bars}</span><span>Afinando el sonido…</span></div>
-        <div class="page-hero-actions"><a class="btn is-solid" href="index.html">Volver al inicio <span aria-hidden="true">→</span></a><a class="btn" data-href="canal" target="_blank" rel="noopener">Únete al canal de WhatsApp</a></div>
+        <div class="page-hero-actions"><a class="btn is-solid" href="./">Volver al inicio <span aria-hidden="true">→</span></a><a class="btn" data-href="canal" target="_blank" rel="noopener">Únete al canal de WhatsApp</a></div>
       </div>
     </section>
 '''
@@ -353,14 +353,20 @@ page("celebraciones", "Celebraciones · Cumpleaños y grupos | Alegría 2.0",
         <div class="booking-photo" data-reveal="img"><img src="assets/img/escenas/arco-4-800.jpg" srcset="assets/img/escenas/arco-4-800.jpg 800w, assets/img/escenas/arco-4-1400.jpg 1400w, assets/img/escenas/arco-4.jpg 2000w" sizes="(max-width: 767px) 92vw, 40vw" alt="Grupo celebrando en Alegría 2.0" loading="lazy"></div>
         <form class="form" data-reveal>
           <h2 class="neon-small">Pide tu sitio</h2>
-          <div class="field"><label for="f-nombre">Tu nombre</label><input id="f-nombre" name="nombre" required autocomplete="given-name"></div>
+          <div class="field"><label for="f-nombre">Tu nombre</label><input id="f-nombre" name="nombre" required autocomplete="name" autocapitalize="words" maxlength="80"></div>
+          <div class="field"><label for="f-telefono">Tu WhatsApp</label><input id="f-telefono" name="telefono" type="tel" required autocomplete="tel" inputmode="tel" placeholder="612 345 678"></div>
           <div class="field"><label for="f-tipo">Qué celebráis</label><select id="f-tipo" name="tipo"><option>Un cumpleaños</option><option>Una despedida</option><option>Una quedada de grupo</option><option>Otra cosa</option></select></div>
-          <div class="field"><label for="f-fecha">Día</label><input id="f-fecha" name="fecha" type="date" required></div>
           <div class="field"><label for="f-personas">Cuántos sois</label><input id="f-personas" name="personas" type="number" min="2" max="80" value="8" required inputmode="numeric"></div>
-          <div class="field is-wide"><label for="f-mensaje">Algo más (opcional)</label><textarea id="f-mensaje" name="mensaje" placeholder="Hora aproximada, si traéis tarta, canciones que no pueden faltar…"></textarea></div>
+          <div class="field"><label for="f-fecha">Día</label><input id="f-fecha" name="fecha" type="date" required></div>
+          <div class="field"><label for="f-hora">Hora aproximada</label><select id="f-hora" name="hora"><option>20:00 – 22:00</option><option selected>22:00 – 00:00</option><option>Más tarde</option><option>Aún no lo sé</option></select></div>
+          <div class="field is-wide"><label for="f-email">Tu email (opcional)</label><input id="f-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="tu@email.com"></div>
+          <div class="field is-wide"><label for="f-mensaje">Algo más (opcional)</label><textarea id="f-mensaje" name="mensaje" maxlength="1000" placeholder="Si traéis tarta, canciones que no pueden faltar, alguna sorpresa…"></textarea></div>
+          <label class="form-check is-wide"><input type="checkbox" name="privacidad" required><span>He leído la <a href="privacidad.html#reservas">política de privacidad</a> y acepto que Alegría 2.0 guarde mi petición para gestionarla.</span></label>
+          <label class="form-check is-wide"><input type="checkbox" name="promos"><span><b>Avisadme de fiestas y promociones</b> por WhatsApp o email. Te das de baja cuando quieras.</span></label>
+          <p class="form-error is-wide" role="alert"></p>
           <div class="form-actions">
             <button class="btn is-solid" type="submit">Enviar por WhatsApp <span aria-hidden="true">→</span></button>
-            <p class="form-note">Se abre WhatsApp con tu mensaje listo para enviar.<br>No guardamos tus datos en esta web.</p>
+            <p class="form-note">Se abre WhatsApp con tu mensaje listo: dale a enviar y te contestamos.<br>Guardamos una copia de tu petición para no perderla.</p>
           </div>
         </form>
       </div>
@@ -475,7 +481,7 @@ CLUB_BAJA = ("Puedes borrarla tú cuando quieras con «Borrar mi tarjeta y mis d
 CLUB_PREF = "desde «Mis datos y avisos» en tu tarjeta o escribiéndonos" if SELLOS_ON else "escribiéndonos por WhatsApp"
 CLUB_MOVIL = ("          <li><b>En tu móvil:</b> el navegador guarda un código de tu tarjeta para abrirla sin volver a registrarte. No es una cookie de seguimiento y lo puedes borrar desde tu navegador.</li>\n" if SELLOS_ON else "")
 COOKIES_CLUB = ('\n        <p>Si te das de alta en la <a href="privacidad.html#club">tarjeta de sellos</a>, tu navegador guarda el código de tu tarjeta (almacenamiento local, no una cookie) para abrirla sin volver a registrarte. Es imprescindible para el servicio que has pedido, no sirve para seguirte y se borra si borras los datos del navegador o tu tarjeta.</p>' if SELLOS_ON
-                else '\n        <p>Si te unes desde el formulario del QR, tu navegador recuerda que ya lo has hecho (almacenamiento local, no una cookie) para no pedírtelo otra vez. No sirve para seguirte y se borra si borras los datos del navegador.</p>')
+                else '\n        <p>Si rellenas el formulario del QR o el de reserva, tu navegador recuerda tu nombre, teléfono y, si los diste, email y cumpleaños (almacenamiento local en tu propio móvil, no una cookie), para que la próxima vez te salgan ya puestos y no tengas que escribirlos de nuevo. También recuerda que ya te uniste. No nos llega nada por esto, no sirve para seguirte y se borra si borras los datos del navegador.</p>')
 legal("privacidad", "Política de privacidad", "Privacidad",
       "Política de privacidad de Alegría 2.0: qué datos tratamos, para qué, durante cuánto tiempo y cómo ejercer tus derechos.", f'''
         <h2>1. Responsable del tratamiento</h2>
@@ -485,7 +491,7 @@ legal("privacidad", "Política de privacidad", "Privacidad",
           <li><b>Contacto:</b> {EMAIL} · 625 92 44 29</li>
         </ul>
         <h2>2. Qué datos recoge esta web</h2>
-        <p>No hay analítica ni publicidad. El único sitio donde dejas datos es {CLUB_INTRO}. El formulario de la página <a href="celebraciones.html">Celebraciones</a> no guarda nada: prepara un mensaje en tu dispositivo y abre WhatsApp.</p>
+        <p>No hay analítica ni publicidad. Solo guardamos datos en dos sitios, y solo si los envías: {CLUB_INTRO.replace(", y solo si lo envías", "").replace(", y solo si te das de alta", "")}, y el formulario de reserva de la página <a href="celebraciones.html">Celebraciones</a>.</p>
         <h2>3. Qué datos tratamos y para qué</h2>
         <h3 id="club">3.1 {CLUB_NOMBRE}</h3>
         <ul>
@@ -495,11 +501,12 @@ legal("privacidad", "Política de privacidad", "Privacidad",
           <li><b>Conservación:</b> mientras sigas con nosotros. Si en 2 años no hay ningún contacto, borramos tus datos. {CLUB_BAJA}</li>
           <li><b>Dónde se guardan:</b> en una base de datos de Supabase alojada en la Unión Europea (París), que actúa como encargado del tratamiento. No cedemos tus datos a nadie ni los usamos para otros negocios.</li>
 {CLUB_MOVIL}        </ul>
-        <h3>3.2 Reservas y consultas</h3>
-        <p>Si nos escribes por WhatsApp o nos llamas, tratamos los datos que nos des (nombre, teléfono, fecha, número de personas y lo que nos cuentes) con una única finalidad: <b>gestionar tu reserva o responder a tu consulta</b>.</p>
+        <h3 id="reservas">3.2 Reservas y consultas</h3>
+        <p>Si nos pides sitio desde el formulario de <a href="celebraciones.html">Celebraciones</a>, nos escribes por WhatsApp o nos llamas, tratamos los datos que nos des (nombre, teléfono, email si nos lo das, tipo de celebración, día, hora aproximada, número de personas y lo que nos cuentes) con una única finalidad: <b>gestionar tu reserva o responder a tu consulta</b>.</p>
         <ul>
+          <li><b>Formulario de la web:</b> al enviarlo guardamos una copia de tu petición en nuestra base de datos (Supabase, alojada en la Unión Europea) y se abre WhatsApp con el mensaje listo para que nos lo mandes. La copia sirve para que ninguna petición se pierda. Si además marcas «Avisadme de fiestas y promociones», entras en nuestra lista de clientes (apartado 3.1) con ese consentimiento; si ya estabas, solo completamos los datos que faltaran.</li>
           <li><b>Base legal:</b> la aplicación de medidas precontractuales a petición tuya (art. 6.1.b del RGPD) y, para lo demás, tu consentimiento al escribirnos (art. 6.1.a).</li>
-          <li><b>Conservación:</b> el tiempo necesario para atender la reserva o la consulta; después se borran, salvo que una ley obligue a guardarlos.</li>
+          <li><b>Conservación:</b> las peticiones del formulario se borran solas un año después del día reservado; lo que nos mandes por WhatsApp, cuando ya no haga falta para atender la reserva o la consulta, salvo que una ley obligue a guardarlo.</li>
           <li><b>Destinatarios:</b> no cedemos tus datos a nadie. Los mensajes pasan por WhatsApp (Meta), que los trata según su propia política de privacidad.</li>
         </ul>
         <h2>4. Servicios de terceros</h2>
@@ -552,7 +559,7 @@ QR_DEMO = """    <!-- demo:qr · se quita al desplegar (tools/paginas.py, DEMO =
         </figure>
       </div>
       <p class="qr-tip">Escanéalo con la cámara del móvil · impreso, desde 4 cm</p>
-      <div class="qr-mesa-link"><a class="btn is-solid" href="qr/index.html">Abrir la página QR de mesa <span aria-hidden="true">→</span></a></div>
+      <div class="qr-mesa-link"><a class="btn is-solid" href="qr/">Abrir la página QR de mesa <span aria-hidden="true">→</span></a></div>
     </section>
     <!-- /demo:qr -->
 """
